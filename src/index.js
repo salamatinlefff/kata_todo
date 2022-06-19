@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './components/app';
+import './index.scss';
+import App from './components';
 
 const root = ReactDOM.createRoot(document.querySelector('.todoapp'));
 

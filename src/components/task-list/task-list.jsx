@@ -1,22 +1,37 @@
-import React, { Component } from 'react';
-import Task from '../task/task';
+import React from 'react';
+import TaskListItem from '../task-list-item';
 
-export default class TaskList extends Component {
-  render() {
-    const { todos, deleteTodo } = this.props;
+const TaskList = (props) => {
+  const {
+    todos,
+    onDeleteTodo,
+    onToggleCompleted,
+    onActiveEdited,
+    onSubmitEdited,
+    onCancelInputEdit,
+    editTodoInputValue,
+    onChangeEditInput,
+  } = props;
 
-    return (
-      <ul className='todo-list'>
-        {todos.map(({ id, ...todo }) => {
-          return (
-            <Task
-              key={id}
-              deleteTodo={() => deleteTodo(id)}
-              {...todo}
-            />
-          );
-        })}
-      </ul>
-    );
-  }
-}
+  return (
+    <ul className='todo-list'>
+      {todos.map((todo) => {
+        return (
+          <TaskListItem
+            key={todo.id}
+            {...todo}
+            onDeleteTodo={onDeleteTodo}
+            onToggleCompleted={onToggleCompleted}
+            onActiveEdited={onActiveEdited}
+            onSubmitEdited={onSubmitEdited}
+            onCancelInputEdit={onCancelInputEdit}
+            editTodoInputValue={editTodoInputValue}
+            onChangeEditInput={onChangeEditInput}
+          />
+        );
+      })}
+    </ul>
+  );
+};
+
+export default TaskList;

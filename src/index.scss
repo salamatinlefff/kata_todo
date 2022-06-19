@@ -223,6 +223,10 @@ body {
   color: gray;
 }
 
+.description {
+  cursor: pointer;
+}
+
 .todo-list li label .description {
   word-break: break-all;
   display: block;

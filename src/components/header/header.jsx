@@ -1,11 +1,25 @@
 import React from 'react';
-import NewTaskForm from '../new-task-form';
+import TaskForm from '../task-form';
 
-export default function Header() {
+const Header = (props) => {
+  const {
+    onAddTodo,
+    onChangeNewTodoInput,
+    newTodoInputValue,
+    onSubmitNewTodoInput,
+  } = props;
+
   return (
     <header className='header'>
       <h1>todos</h1>
-      <NewTaskForm />
+      <TaskForm
+        onAddTodo={onAddTodo}
+        onChangeNewTodoInput={onChangeNewTodoInput}
+        onSubmitNewTodoInput={onSubmitNewTodoInput}
+        newTodoInputValue={newTodoInputValue}
+      />
     </header>
   );
-}
+};
+
+export default Header;
