@@ -2,7 +2,7 @@
   "name": "kata_todo",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://salamatinlefff.github.io/kata_task/",
+  "homepage": "https://salamatinlefff.github.io/kata_todo/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
