@@ -12,4 +12,9 @@ const FilterButton = (props) => {
   );
 };
 
+
+FilterButton.defaultProps = {
+
+}
+
 export default FilterButton;
