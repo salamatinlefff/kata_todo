@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const TaskForm = (props) => {
   const { onSubmitNewTodoInput, onChangeNewTodoInput, newTodoInputValue } =
@@ -16,6 +17,12 @@ const TaskForm = (props) => {
       />
     </form>
   );
+};
+
+TaskForm.propTypes = {
+  onSubmitNewTodoInput: PropTypes.func.isRequired,
+  onChangeNewTodoInput: PropTypes.func.isRequired,
+  newTodoInputValue: PropTypes.string.isRequired,
 };
 
 export default TaskForm;

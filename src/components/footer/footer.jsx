@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import FilterButton from '../filter-button';
 
 const Footer = (props) => {
   const {
     activeTodosCount,
-    onClearCompleted,
     activeClass,
+    onClearCompleted,
     onReturnActiveFilter,
   } = props;
   const buttonsContent = ['All', 'Active', 'Completed'];
@@ -33,6 +34,13 @@ const Footer = (props) => {
       </button>
     </footer>
   );
+};
+
+Footer.propTypes = {
+  activeTodosCount: PropTypes.number.isRequired,
+  activeClass: PropTypes.string.isRequired,
+  onClearCompleted: PropTypes.func.isRequired,
+  onReturnActiveFilter: PropTypes.func.isRequired,
 };
 
 export default Footer;

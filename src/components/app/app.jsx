@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Footer from '../footer';
 import Header from '../header';
+import TaskForm from '../task-form';
 import TaskList from '../task-list';
 
 class App extends Component {
@@ -54,14 +55,18 @@ class App extends Component {
   };
 
   onChangeEditInput = ({ target: { value } }) => {
-    this.setState(() => ({
+    this.setState({
       editTodoInputValue: value,
-    }));
+    });
   };
 
   onSubmitEdited = (id) => {
     return (event) => {
       event.preventDefault();
+
+      if (!this.state.editTodoInputValue.trim()) {
+        return this.onDeleteTodo(id);
+      }
 
       this.setState(({ todos, editTodoInputValue }) => {
         const newTodos = todos.map((todo) => {
@@ -199,11 +204,13 @@ class App extends Component {
 
     return (
       <>
-        <Header
-          newTodoInputValue={this.state.newTodoInputValue}
-          onChangeNewTodoInput={this.onChangeNewTodoInput}
-          onSubmitNewTodoInput={this.onSubmitNewTodoInput}
-        />
+        <Header>
+          <TaskForm
+            newTodoInputValue={this.state.newTodoInputValue}
+            onChangeNewTodoInput={this.onChangeNewTodoInput}
+            onSubmitNewTodoInput={this.onSubmitNewTodoInput}
+          />
+        </Header>
 
         <section className='main'>
           <TaskList

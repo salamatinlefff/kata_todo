@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const FilterButton = (props) => {
   const { content, activeClass, onReturnActiveFilter } = props;
@@ -12,9 +13,10 @@ const FilterButton = (props) => {
   );
 };
 
-
-FilterButton.defaultProps = {
-
-}
+FilterButton.propTypes = {
+  content: PropTypes.string.isRequired,
+  activeClass: PropTypes.string.isRequired,
+  onReturnActiveFilter: PropTypes.func.isRequired,
+};
 
 export default FilterButton;

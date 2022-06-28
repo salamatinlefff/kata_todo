@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const TaskListItem = (props) => {
   const {
@@ -67,6 +68,21 @@ const TaskListItem = (props) => {
       )}
     </li>
   );
+};
+
+TaskListItem.propTypes = {
+  id: PropTypes.number.isRequired,
+  description: PropTypes.string.isRequired,
+  timeCreated: PropTypes.object.isRequired,
+  completed: PropTypes.bool.isRequired,
+  editing: PropTypes.bool.isRequired,
+  editTodoInputValue: PropTypes.string.isRequired,
+  onDeleteTodo: PropTypes.func.isRequired,
+  onToggleCompleted: PropTypes.func.isRequired,
+  onActiveEdited: PropTypes.func.isRequired,
+  onChangeEditInput: PropTypes.func.isRequired,
+  onCancelInputEdit: PropTypes.func.isRequired,
+  onSubmitEdited: PropTypes.func.isRequired,
 };
 
 export default TaskListItem;
