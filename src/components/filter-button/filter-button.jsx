@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const FilterButton = (props) => {
+function FilterButton(props) {
   const { content, activeClass, onReturnActiveFilter } = props;
 
   const className = activeClass === content ? 'selected' : '';
 
   return (
-    <button className={className} onClick={() => onReturnActiveFilter(content)}>
+    <button className={className} type="button" onClick={() => onReturnActiveFilter(content)}>
       {content}
     </button>
   );
-};
+}
 
 FilterButton.propTypes = {
   content: PropTypes.string.isRequired,

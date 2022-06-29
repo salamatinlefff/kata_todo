@@ -1,12 +1,12 @@
 import React from 'react';
 
-const Header = (props) => {
+function Header({ children }) {
   return (
-    <header className='header'>
+    <header className="header">
       <h1>todos</h1>
-      {props.children}
+      {children}
     </header>
   );
-};
+}
 
 export default Header;

@@ -1,36 +1,48 @@
 import React, { Component } from 'react';
+
 import Footer from '../footer';
 import Header from '../header';
 import TaskForm from '../task-form';
 import TaskList from '../task-list';
 
 class App extends Component {
-  maxId = 0;
+  static createFilteredTodos = (todos, filter) => {
+    if (filter === 'Active') return todos.filter((todo) => !todo.completed);
+    if (filter === 'Completed') return todos.filter((todo) => todo.completed);
 
-  state = {
-    todos: [
-      this.createTodo({
-        description: 'Learn React',
-        timeCreated: new Date(2022, 4, 31, 12, 28, 15),
-        completed: false,
-        editing: false,
-      }),
-      this.createTodo({
-        description: 'Refactor code',
-        timeCreated: new Date(2022, 4, 31, 9, 25, 15),
-        completed: false,
-        editing: false,
-      }),
-      this.createTodo({
-        description: 'Cancel editing',
-        timeCreated: new Date(2022, 5, 19, 10, 25, 15),
-        completed: true,
-      }),
-    ],
-    filter: 'All',
-    newTodoInputValue: '',
-    editTodoInputValue: '',
+    return [...todos];
   };
+
+  constructor() {
+    super();
+
+    this.maxId = 0;
+
+    this.state = {
+      todos: [
+        this.createTodo({
+          description: 'Learn React',
+          timeCreated: new Date(2022, 4, 31, 12, 28, 15),
+          completed: false,
+          editing: false,
+        }),
+        this.createTodo({
+          description: 'Refactor code',
+          timeCreated: new Date(2022, 4, 31, 9, 25, 15),
+          completed: false,
+          editing: false,
+        }),
+        this.createTodo({
+          description: 'Cancel editing',
+          timeCreated: new Date(2022, 5, 19, 10, 25, 15),
+          completed: true,
+        }),
+      ],
+      filter: 'All',
+      newTodoInputValue: '',
+      editTodoInputValue: '',
+    };
+  }
 
   componentDidMount() {
     this.interval = setInterval(() => this.setState({}), 5000);
@@ -60,37 +72,40 @@ class App extends Component {
     });
   };
 
-  onSubmitEdited = (id) => {
-    return (event) => {
-      event.preventDefault();
+  onSubmitEdited = (id) => (event) => {
+    event.preventDefault();
+    const { editTodoInputValue } = this.state;
 
-      if (!this.state.editTodoInputValue.trim()) {
-        return this.onDeleteTodo(id);
-      }
+    if (!editTodoInputValue.trim()) return this.onDeleteTodo(id);
 
-      this.setState(({ todos, editTodoInputValue }) => {
-        const newTodos = todos.map((todo) => {
-          if (todo.id === id) {
-            todo.description = editTodoInputValue;
-            todo.editing = !todo.editing;
-          }
+    return this.setState((state) => {
+      const newTodos = state.todos.map((todo) => {
+        const newTodo = { ...todo };
 
-          return todo;
-        });
+        if (newTodo.id === id) {
+          newTodo.description = state.editTodoInputValue;
+          newTodo.editing = !newTodo.editing;
+        }
 
-        return {
-          editTodoInputValue: '',
-          todos: newTodos,
-        };
+        return newTodo;
       });
-    };
+
+      return {
+        editTodoInputValue: '',
+        todos: newTodos,
+      };
+    });
   };
 
   onActiveEdited = (id, description) => {
-    const newTodos = this.state.todos.map((todo) => {
-      if (todo.id === id) todo.editing = !todo.editing;
+    const { todos } = this.state;
 
-      return todo;
+    const newTodos = todos.map((todo) => {
+      const newTodo = { ...todo };
+
+      if (newTodo.id === id) newTodo.editing = !newTodo.editing;
+
+      return newTodo;
     });
 
     this.setState({
@@ -99,16 +114,19 @@ class App extends Component {
     });
   };
 
-  onCancelInputEdit = (id) => {
-    return ({ code }) => {
+  onCancelInputEdit =
+    (id) =>
+    ({ code }) => {
       if (code === 'Escape') {
         this.setState(({ todos }) => {
           const newTodos = todos.map((todo) => {
-            if (todo.id === id) {
-              todo.editing = !todo.editing;
+            const newTodo = { ...todo };
+
+            if (newTodo.id === id) {
+              newTodo.editing = !newTodo.editing;
             }
 
-            return todo;
+            return newTodo;
           });
 
           return {
@@ -118,7 +136,6 @@ class App extends Component {
         });
       }
     };
-  };
 
   onDeleteTodo = (deletedId) => {
     this.setState((state) => {
@@ -145,37 +162,22 @@ class App extends Component {
   };
 
   onSubmitNewTodoInput = (event) => {
+    const { newTodoInputValue } = this.state;
+
     event.preventDefault();
 
-    this.AddTodo({ description: this.state.newTodoInputValue.trim() });
+    this.AddTodo({ description: newTodoInputValue.trim() });
 
     this.setState({
       newTodoInputValue: '',
     });
   };
 
-  onReturnActiveFilter = (filterName = this.state.filter) => {
+  onReturnActiveFilter = (filterName = 'All') => {
     this.setState({
       filter: filterName,
     });
   };
-
-  createTodo(options) {
-    const {
-      description,
-      timeCreated = new Date(),
-      completed = false,
-      editing = false,
-    } = options;
-
-    return {
-      id: (this.maxId += 1),
-      description,
-      timeCreated,
-      completed,
-      editing,
-    };
-  }
 
   AddTodo = (label) => {
     if (label.description) {
@@ -189,16 +191,23 @@ class App extends Component {
     }
   };
 
-  createFilteredTodos = (todos, filter) => {
-    if (filter === 'All') return [...todos];
-    if (filter === 'Active') return todos.filter((todo) => !todo.completed);
-    if (filter === 'Completed') return todos.filter((todo) => todo.completed);
-  };
+  createTodo(options) {
+    const { description, timeCreated = new Date(), completed = false, editing = false } = options;
+    this.maxId += 1;
+
+    return {
+      id: this.maxId,
+      description,
+      timeCreated,
+      completed,
+      editing,
+    };
+  }
 
   render() {
-    const { todos, filter } = this.state;
+    const { todos, filter, editTodoInputValue, newTodoInputValue } = this.state;
 
-    const filteredTodos = this.createFilteredTodos(todos, filter);
+    const filteredTodos = App.createFilteredTodos(todos, filter);
 
     const activeTodosCount = todos.filter((todo) => !todo.completed).length;
 
@@ -206,16 +215,16 @@ class App extends Component {
       <>
         <Header>
           <TaskForm
-            newTodoInputValue={this.state.newTodoInputValue}
+            newTodoInputValue={newTodoInputValue}
             onChangeNewTodoInput={this.onChangeNewTodoInput}
             onSubmitNewTodoInput={this.onSubmitNewTodoInput}
           />
         </Header>
 
-        <section className='main'>
+        <section className="main">
           <TaskList
             todos={filteredTodos}
-            editTodoInputValue={this.state.editTodoInputValue}
+            editTodoInputValue={editTodoInputValue}
             onDeleteTodo={this.onDeleteTodo}
             onToggleCompleted={this.onToggleCompleted}
             onActiveEdited={this.onActiveEdited}

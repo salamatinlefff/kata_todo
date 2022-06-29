@@ -1,14 +1,10 @@
-import { formatDistanceToNow } from 'date-fns';
 import React from 'react';
+import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 
-const TaskListItem = (props) => {
+function TaskListItem(props) {
   const {
-    id,
-    description,
-    timeCreated,
-    completed,
-    editing,
+    todo: { id, description, timeCreated, completed, editing },
     editTodoInputValue,
     onDeleteTodo,
     onToggleCompleted,
@@ -24,19 +20,18 @@ const TaskListItem = (props) => {
 
   return (
     <li className={currentClass}>
-      <div className='view'>
+      <div className="view">
         <input
-          className='toggle'
-          type='checkbox'
+          className="toggle"
+          id={`checkbox${id}`}
+          type="checkbox"
           onChange={() => onToggleCompleted(id)}
           checked={completed}
         />
 
-        <label>
-          <span className='description' onClick={() => onToggleCompleted(id)}>
-            {description}
-          </span>
-          <span className='created'>
+        <label htmlFor={`checkbox${id}`}>
+          <span className="description">{description}</span>
+          <span className="created">
             created{' '}
             {formatDistanceToNow(new Date(timeCreated), {
               addSuffix: true,
@@ -46,21 +41,25 @@ const TaskListItem = (props) => {
         </label>
 
         <button
-          className='icon icon-edit'
+          className="icon icon-edit"
+          type="button"
+          aria-label="edit todo"
           onClick={() => onActiveEdited(id, description)}
-        ></button>
+        />
         <button
-          className='icon icon-destroy'
+          className="icon icon-destroy"
+          type="button"
+          aria-label="delete todo"
           onClick={() => onDeleteTodo(id)}
-        ></button>
+        />
       </div>
       {editing && (
         <form style={{ margin: 0 }} onSubmit={onSubmitEdited(id)}>
           <input
-            type='text'
-            className='edit'
+            type="text"
+            className="edit"
+            autoFocus
             value={editTodoInputValue}
-            autoFocus={true}
             onKeyUp={onCancelInputEdit(id)}
             onChange={onChangeEditInput}
           />
@@ -68,14 +67,16 @@ const TaskListItem = (props) => {
       )}
     </li>
   );
-};
+}
 
 TaskListItem.propTypes = {
-  id: PropTypes.number.isRequired,
-  description: PropTypes.string.isRequired,
-  timeCreated: PropTypes.object.isRequired,
-  completed: PropTypes.bool.isRequired,
-  editing: PropTypes.bool.isRequired,
+  todo: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    description: PropTypes.string.isRequired,
+    timeCreated: PropTypes.shape({}).isRequired,
+    completed: PropTypes.bool.isRequired,
+    editing: PropTypes.bool.isRequired,
+  }).isRequired,
   editTodoInputValue: PropTypes.string.isRequired,
   onDeleteTodo: PropTypes.func.isRequired,
   onToggleCompleted: PropTypes.func.isRequired,

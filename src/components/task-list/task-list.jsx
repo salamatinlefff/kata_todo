@@ -1,8 +1,9 @@
 import React from 'react';
-import TaskListItem from '../task-list-item';
 import PropTypes from 'prop-types';
 
-const TaskList = (props) => {
+import TaskListItem from '../task-list-item';
+
+function TaskList(props) {
   const {
     todos,
     editTodoInputValue,
@@ -15,32 +16,30 @@ const TaskList = (props) => {
   } = props;
 
   return (
-    <ul className='todo-list'>
-      {todos.map((todo) => {
-        return (
-          <TaskListItem
-            key={todo.id}
-            {...todo}
-            onDeleteTodo={onDeleteTodo}
-            onToggleCompleted={onToggleCompleted}
-            onActiveEdited={onActiveEdited}
-            onSubmitEdited={onSubmitEdited}
-            onCancelInputEdit={onCancelInputEdit}
-            editTodoInputValue={editTodoInputValue}
-            onChangeEditInput={onChangeEditInput}
-          />
-        );
-      })}
+    <ul className="todo-list">
+      {todos.map((todo) => (
+        <TaskListItem
+          key={todo.id}
+          todo={todo}
+          editTodoInputValue={editTodoInputValue}
+          onDeleteTodo={onDeleteTodo}
+          onToggleCompleted={onToggleCompleted}
+          onActiveEdited={onActiveEdited}
+          onSubmitEdited={onSubmitEdited}
+          onCancelInputEdit={onCancelInputEdit}
+          onChangeEditInput={onChangeEditInput}
+        />
+      ))}
     </ul>
   );
-};
+}
 
 TaskList.defaultProps = {
   todos: [],
 };
 
 TaskList.propTypes = {
-  todos: PropTypes.array,
+  todos: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.object])),
   editTodoInputValue: PropTypes.string.isRequired,
   onDeleteTodo: PropTypes.func.isRequired,
   onToggleCompleted: PropTypes.func.isRequired,
