@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { v4 as uuid } from 'uuid';
 
+import ACTIONS from '../../services/services';
 import Footer from '../footer';
 import Header from '../header';
 import TaskForm from '../task-form';
@@ -8,8 +9,8 @@ import TaskList from '../task-list';
 
 class App extends Component {
   static createFilteredTodos = (todos, filter) => {
-    if (filter === 'Active') return todos.filter((todo) => !todo.completed);
-    if (filter === 'Completed') return todos.filter((todo) => todo.completed);
+    if (filter === ACTIONS.ACTIVE) return todos.filter((todo) => !todo.completed);
+    if (filter === ACTIONS.COMPLETED) return todos.filter((todo) => todo.completed);
 
     return [...todos];
   };
