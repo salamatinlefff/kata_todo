@@ -194,7 +194,7 @@ class App extends Component {
     if (!options.description) return;
 
     this.setState(({ todos }) => {
-      const newTodo = this.createTodo(options);
+      const newTodo = App.createTodo(options);
 
       return {
         todos: [...todos, newTodo],
@@ -206,6 +206,7 @@ class App extends Component {
     const { todos, filter, editTodoInputValue, newTodoInputValue } = this.state;
 
     const filteredTodos = App.createFilteredTodos(todos, filter);
+    // task list is empty
 
     const activeTodosCount = todos.filter((todo) => !todo.completed).length;
 
@@ -220,16 +221,20 @@ class App extends Component {
         </Header>
 
         <section className="main">
-          <TaskList
-            todos={filteredTodos}
-            editTodoInputValue={editTodoInputValue}
-            onDeleteTodo={this.onDeleteTodo}
-            onToggleCompleted={this.onToggleCompleted}
-            onActiveEdited={this.onActiveEdited}
-            onSubmitEdited={this.onSubmitEdited}
-            onCancelInputEdit={this.onCancelInputEdit}
-            onChangeEditInput={this.onChangeEditInput}
-          />
+          {filteredTodos.length ? (
+            <TaskList
+              todos={filteredTodos}
+              editTodoInputValue={editTodoInputValue}
+              onDeleteTodo={this.onDeleteTodo}
+              onToggleCompleted={this.onToggleCompleted}
+              onActiveEdited={this.onActiveEdited}
+              onSubmitEdited={this.onSubmitEdited}
+              onCancelInputEdit={this.onCancelInputEdit}
+              onChangeEditInput={this.onChangeEditInput}
+            />
+          ) : (
+            <p className="lack-todo">No results found by filter &lsquo;{filter}&lsquo; </p>
+          )}
 
           <Footer
             activeTodosCount={activeTodosCount}
