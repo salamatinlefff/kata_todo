@@ -125,8 +125,9 @@ class App extends Component {
     });
   };
 
-  onCancelInputEdit(id) {
-    return ({ code }) => {
+  onCancelInputEdit =
+    (id) =>
+    ({ code }) => {
       if (code === 'Escape') {
         this.setState(({ todos }) => {
           const newTodos = todos.map((todo) => {
@@ -146,7 +147,6 @@ class App extends Component {
         });
       }
     };
-  }
 
   onDeleteTodo = (deletedId) => {
     this.setState((state) => {
@@ -206,7 +206,6 @@ class App extends Component {
     const { todos, filter, editTodoInputValue, newTodoInputValue } = this.state;
 
     const filteredTodos = App.createFilteredTodos(todos, filter);
-    // task list is empty
 
     const activeTodosCount = todos.filter((todo) => !todo.completed).length;
 

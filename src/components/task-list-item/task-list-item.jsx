@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 function TaskListItem(props) {
   const {
@@ -14,9 +15,10 @@ function TaskListItem(props) {
     onSubmitEdited,
   } = props;
 
-  let currentClass = '';
-  if (completed) currentClass += ' completed';
-  if (editing) currentClass += ' editing';
+  const currentClass = classNames({
+    completed,
+    editing,
+  });
 
   return (
     <li className={currentClass}>
