@@ -179,16 +179,16 @@ class App extends Component {
     });
   };
 
-  AddTodo = (label) => {
-    if (label.description) {
-      this.setState(({ todos }) => {
-        const newTodo = this.createTodo(label);
+  AddTodo = (options) => {
+    if (!options.description) return;
 
-        return {
-          todos: [...todos, newTodo],
-        };
-      });
-    }
+    this.setState(({ todos }) => {
+      const newTodo = this.createTodo(options);
+
+      return {
+        todos: [...todos, newTodo],
+      };
+    });
   };
 
   createTodo(options) {
