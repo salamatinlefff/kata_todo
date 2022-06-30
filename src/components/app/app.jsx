@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { v4 as uuid } from 'uuid';
 
 import Footer from '../footer';
 import Header from '../header';
@@ -13,26 +14,36 @@ class App extends Component {
     return [...todos];
   };
 
+  static createTodo(options) {
+    const { description, timeCreated = new Date(), completed = false, editing = false } = options;
+
+    return {
+      id: uuid(),
+      description,
+      timeCreated,
+      completed,
+      editing,
+    };
+  }
+
   constructor() {
     super();
 
-    this.maxId = 0;
-
     this.state = {
       todos: [
-        this.createTodo({
+        App.createTodo({
           description: 'Learn React',
           timeCreated: new Date(2022, 4, 31, 12, 28, 15),
           completed: false,
           editing: false,
         }),
-        this.createTodo({
+        App.createTodo({
           description: 'Refactor code',
           timeCreated: new Date(2022, 4, 31, 9, 25, 15),
           completed: false,
           editing: false,
         }),
-        this.createTodo({
+        App.createTodo({
           description: 'Cancel editing',
           timeCreated: new Date(2022, 5, 19, 10, 25, 15),
           completed: true,
@@ -190,19 +201,6 @@ class App extends Component {
       };
     });
   };
-
-  createTodo(options) {
-    const { description, timeCreated = new Date(), completed = false, editing = false } = options;
-    this.maxId += 1;
-
-    return {
-      id: this.maxId,
-      description,
-      timeCreated,
-      completed,
-      editing,
-    };
-  }
 
   render() {
     const { todos, filter, editTodoInputValue, newTodoInputValue } = this.state;

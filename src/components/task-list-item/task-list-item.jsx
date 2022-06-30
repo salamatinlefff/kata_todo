@@ -71,7 +71,7 @@ function TaskListItem(props) {
 
 TaskListItem.propTypes = {
   todo: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     timeCreated: PropTypes.shape({}).isRequired,
     completed: PropTypes.bool.isRequired,
