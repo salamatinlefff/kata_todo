@@ -30,34 +30,33 @@ class App extends Component {
   constructor() {
     super();
 
-    this.state = {
-      todos: [
-        App.createTodo({
-          description: 'Learn React',
-          timeCreated: new Date(2022, 4, 31, 12, 28, 15),
-          completed: false,
-          editing: false,
-        }),
-        App.createTodo({
-          description: 'Refactor code',
-          timeCreated: new Date(2022, 4, 31, 9, 25, 15),
-          completed: false,
-          editing: false,
-        }),
-        App.createTodo({
-          description: 'Cancel editing',
-          timeCreated: new Date(2022, 5, 19, 10, 25, 15),
-          completed: true,
-        }),
-      ],
-      filter: 'All',
-      newTodoInputValue: '',
-      editTodoInputValue: '',
-    };
+    this.state = {};
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.setState({}), 5000);
+
+    if (!localStorage.getItem('todo-app')) {
+      localStorage.setItem(
+        'todo-app',
+        JSON.stringify({
+          todos: [],
+          filter: 'All',
+          newTodoInputValue: '',
+          editTodoInputValue: '',
+        }),
+      );
+    }
+
+    const newState = JSON.parse(localStorage.getItem('todo-app'));
+
+    this.setState(newState);
+  }
+
+  componentDidUpdate() {
+    const newStorageItem = { ...this.state };
+
+    localStorage.setItem('todo-app', JSON.stringify(newStorageItem));
   }
 
   componentWillUnmount() {
@@ -205,6 +204,8 @@ class App extends Component {
 
   render() {
     const { todos, filter, editTodoInputValue, newTodoInputValue } = this.state;
+
+    if (!filter) return null;
 
     const filteredTodos = App.createFilteredTodos(todos, filter);
 

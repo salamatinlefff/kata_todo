@@ -75,7 +75,7 @@ TaskListItem.propTypes = {
   todo: PropTypes.shape({
     id: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    timeCreated: PropTypes.shape({}).isRequired,
+    timeCreated: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     completed: PropTypes.bool.isRequired,
     editing: PropTypes.bool.isRequired,
   }).isRequired,
