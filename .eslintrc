@@ -40,8 +40,8 @@
     "semi": "error",
     "react/no-unused-class-component-methods": "error",
     "react/no-array-index-key": "error",
+    "indent": ["error", 2],
     "react/state-in-constructor": "warn",
-    "indent": ["off", 2],
     "jsx-a11y/no-autofocus": "off"
   },
   "settings": {

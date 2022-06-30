@@ -114,9 +114,8 @@ class App extends Component {
     });
   };
 
-  onCancelInputEdit =
-    (id) =>
-    ({ code }) => {
+  onCancelInputEdit(id) {
+    return ({ code }) => {
       if (code === 'Escape') {
         this.setState(({ todos }) => {
           const newTodos = todos.map((todo) => {
@@ -136,6 +135,7 @@ class App extends Component {
         });
       }
     };
+  }
 
   onDeleteTodo = (deletedId) => {
     this.setState((state) => {
