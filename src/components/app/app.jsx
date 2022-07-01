@@ -53,10 +53,16 @@ class App extends Component {
     this.setState(newState);
   }
 
-  componentDidUpdate() {
-    const newStorageItem = { ...this.state };
+  componentDidUpdate(prevProps, prevState) {
+    const { todos, filter } = this.state;
 
-    localStorage.setItem('todo-app', JSON.stringify(newStorageItem));
+    if (filter === prevState.filter && todos === prevState.todos) {
+      return null;
+    }
+
+    const newStorageItem = { ...this.state, todos: [...todos] };
+
+    return localStorage.setItem('todo-app', JSON.stringify(newStorageItem));
   }
 
   componentWillUnmount() {
