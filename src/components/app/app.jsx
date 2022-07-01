@@ -211,7 +211,7 @@ class App extends Component {
   render() {
     const { todos, filter, editTodoInputValue, newTodoInputValue } = this.state;
 
-    if (!filter) return null;
+    if (!todos) return null;
 
     const filteredTodos = App.createFilteredTodos(todos, filter);
 
