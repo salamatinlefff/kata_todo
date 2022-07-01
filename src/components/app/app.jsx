@@ -54,9 +54,9 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { todos, filter } = this.state;
+    const { todos } = this.state;
 
-    if (filter === prevState.filter && todos === prevState.todos) {
+    if (todos === prevState.todos) {
       return null;
     }
 
