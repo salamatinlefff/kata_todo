@@ -14,20 +14,8 @@ function TaskForm(props) {
         autoFocus
         value={newTodoInputValue}
       />
-      <input
-        className="new-todo-form__timer"
-        type="text"
-        onChange={() => {}}
-        placeholder="Min"
-        autoFocus
-      />
-      <input
-        className="new-todo-form__timer"
-        type="text"
-        onChange={() => {}}
-        placeholder="Sec"
-        autoFocus
-      />
+      <input className="new-todo-form__timer" type="text" onChange={() => {}} placeholder="Min" />
+      <input className="new-todo-form__timer" type="text" onChange={() => {}} placeholder="Sec" />
       <button type="submit" hidden aria-label="submit form" />
     </form>
   );
