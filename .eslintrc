@@ -42,7 +42,8 @@
     "react/no-array-index-key": "error",
     "indent": ["off", 2],
     "react/state-in-constructor": "warn",
-    "jsx-a11y/no-autofocus": "off"
+    "jsx-a11y/no-autofocus": "off",
+    "jsx-a11y/label-has-associated-control": "off"
   },
   "settings": {
     "import/resolver": {

@@ -31,8 +31,13 @@ function TaskListItem(props) {
           checked={completed}
         />
 
-        <label htmlFor={`checkbox${id}`}>
-          <span className="description">{description}</span>
+        <label>
+          <span className="title">{description}</span>
+          <span className="description">
+            <button type="button" aria-label="play" className="icon icon-play" />
+            <button type="button" aria-label="pause" className="icon icon-pause" />
+            12:25
+          </span>
           <span className="created">
             created{' '}
             {formatDistanceToNow(new Date(timeCreated), {

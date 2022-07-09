@@ -5,7 +5,7 @@ function TaskForm(props) {
   const { onSubmitNewTodoInput, onChangeNewTodoInput, newTodoInputValue } = props;
 
   return (
-    <form style={{ margin: 0 }} onSubmit={onSubmitNewTodoInput}>
+    <form className="new-todo-form" style={{ margin: 0 }} onSubmit={onSubmitNewTodoInput}>
       <input
         className="new-todo"
         type="text"
@@ -14,6 +14,21 @@ function TaskForm(props) {
         autoFocus
         value={newTodoInputValue}
       />
+      <input
+        className="new-todo-form__timer"
+        type="text"
+        onChange={() => {}}
+        placeholder="Min"
+        autoFocus
+      />
+      <input
+        className="new-todo-form__timer"
+        type="text"
+        onChange={() => {}}
+        placeholder="Sec"
+        autoFocus
+      />
+      <button type="submit" hidden aria-label="submit form" />
     </form>
   );
 }
