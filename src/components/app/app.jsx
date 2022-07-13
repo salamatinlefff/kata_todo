@@ -8,33 +8,27 @@ import TaskForm from '../task-form';
 import TaskList from '../task-list';
 
 class App extends Component {
-  constructor() {
-    super();
-
-    this.state = {};
-  }
+  state = {};
 
   componentDidMount() {
-    this.interval = setInterval(() => this.setState({}), 5000);
-
     if (!localStorage.getItem('todo-app')) {
-      localStorage.setItem(
-        'todo-app',
-        JSON.stringify({
-          todos: [],
-          filter: 'All',
-        }),
-      );
-    }
+      const todoApp = {
+        todos: [],
+        filter: 'All',
+      };
 
-    window.addEventListener('storage', (event) => {
-      localStorage.setItem('todo-app', event.newValue);
-      this.setState(JSON.parse(event.newValue));
-    });
+      localStorage.setItem('todo-app', JSON.stringify(todoApp));
+    }
 
     const newState = JSON.parse(localStorage.getItem('todo-app'));
 
     this.setState(newState);
+    this.interval = setInterval(() => this.setState({}), 5000);
+
+    window.addEventListener('storage', (event) => {
+      localStorage.setItem('todo-app', event.newValue || '');
+      this.setState(JSON.parse(event.newValue));
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
