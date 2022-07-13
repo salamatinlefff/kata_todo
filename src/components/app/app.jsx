@@ -1,32 +1,13 @@
 import React, { Component } from 'react';
 import { v4 as uuid } from 'uuid';
 
-import ACTIONS from '../../services/services';
+import ACTIONS, { timeToSeconds } from '../utils/utils';
 import Footer from '../footer';
 import Header from '../header';
 import TaskForm from '../task-form';
 import TaskList from '../task-list';
 
 class App extends Component {
-  static createFilteredTodos = (todos, filter) => {
-    if (filter === ACTIONS.ACTIVE) return todos.filter((todo) => !todo.completed);
-    if (filter === ACTIONS.COMPLETED) return todos.filter((todo) => todo.completed);
-
-    return [...todos];
-  };
-
-  static createTodo(options) {
-    const { description, timeCreated = new Date(), completed = false, editing = false } = options;
-
-    return {
-      id: uuid(),
-      description,
-      timeCreated,
-      completed,
-      editing,
-    };
-  }
-
   constructor() {
     super();
 
@@ -42,7 +23,6 @@ class App extends Component {
         JSON.stringify({
           todos: [],
           filter: 'All',
-          newTodoInputValue: '',
           editTodoInputValue: '',
         }),
       );
@@ -91,6 +71,7 @@ class App extends Component {
 
   onSubmitEdited = (id) => (event) => {
     event.preventDefault();
+
     const { editTodoInputValue } = this.state;
 
     if (!editTodoInputValue.trim()) return this.onDeleteTodo(id);
@@ -108,7 +89,6 @@ class App extends Component {
       });
 
       return {
-        editTodoInputValue: '',
         todos: newTodos,
       };
     });
@@ -174,19 +154,12 @@ class App extends Component {
     });
   };
 
-  onChangeNewTodoInput = ({ target: { value } }) => {
-    this.setState({ newTodoInputValue: value });
-  };
+  onSubmitNewTodoInput = ({ text, minutes, seconds }) => {
+    const totalTime = timeToSeconds(minutes, seconds);
 
-  onSubmitNewTodoInput = (event) => {
-    const { newTodoInputValue } = this.state;
-
-    event.preventDefault();
-
-    this.AddTodo({ description: newTodoInputValue.trim() });
-
-    this.setState({
-      newTodoInputValue: '',
+    this.AddTodo({
+      description: text.trim(),
+      totalTime,
     });
   };
 
@@ -196,11 +169,25 @@ class App extends Component {
     });
   };
 
+  onChangeTimeTodo = (id, currentTime) => {
+    this.setState(({ todos }) => {
+      const newTodos = todos.map((todo) => {
+        if (todo.id === id) return { ...todo, currentTime };
+
+        return todo;
+      });
+
+      return {
+        todos: newTodos,
+      };
+    });
+  };
+
   AddTodo = (options) => {
     if (!options.description) return;
 
     this.setState(({ todos }) => {
-      const newTodo = App.createTodo(options);
+      const newTodo = this.createTodo(options);
 
       return {
         todos: [...todos, newTodo],
@@ -208,23 +195,47 @@ class App extends Component {
     });
   };
 
+  createFilteredTodos = (todos, filter) => {
+    if (filter === ACTIONS.ACTIVE) return todos.filter((todo) => !todo.completed);
+    if (filter === ACTIONS.COMPLETED) return todos.filter((todo) => todo.completed);
+
+    return [...todos];
+  };
+
+  createTodo(options) {
+    const {
+      description,
+      timeCreated = new Date(),
+      completed = false,
+      editing = false,
+      totalTime,
+      currentTime = totalTime,
+    } = options;
+
+    return {
+      id: uuid(),
+      totalTime,
+      currentTime,
+      description,
+      timeCreated,
+      completed,
+      editing,
+    };
+  }
+
   render() {
-    const { todos, filter, editTodoInputValue, newTodoInputValue } = this.state;
+    const { todos, filter, editTodoInputValue } = this.state;
 
     if (!todos) return null;
 
-    const filteredTodos = App.createFilteredTodos(todos, filter);
+    const filteredTodos = this.createFilteredTodos(todos, filter);
 
     const activeTodosCount = todos.filter((todo) => !todo.completed).length;
 
     return (
       <>
         <Header>
-          <TaskForm
-            newTodoInputValue={newTodoInputValue}
-            onChangeNewTodoInput={this.onChangeNewTodoInput}
-            onSubmitNewTodoInput={this.onSubmitNewTodoInput}
-          />
+          <TaskForm onSubmitNewTodoInput={this.onSubmitNewTodoInput} />
         </Header>
 
         <section className="main">
@@ -238,6 +249,7 @@ class App extends Component {
               onSubmitEdited={this.onSubmitEdited}
               onCancelInputEdit={this.onCancelInputEdit}
               onChangeEditInput={this.onChangeEditInput}
+              onChangeTimeTodo={this.onChangeTimeTodo}
             />
           ) : (
             <p className="lack-todo">No results found by filter &lsquo;{filter}&lsquo; </p>

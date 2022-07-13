@@ -1,11 +1,14 @@
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import ReactTooltip from 'react-tooltip';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import Timer from '../timer';
+
 function TaskListItem(props) {
   const {
-    todo: { id, description, timeCreated, completed, editing },
+    todo: { id, description, timeCreated, completed, editing, totalTime, currentTime },
     editTodoInputValue,
     onDeleteTodo,
     onToggleCompleted,
@@ -13,6 +16,7 @@ function TaskListItem(props) {
     onChangeEditInput,
     onCancelInputEdit,
     onSubmitEdited,
+    onChangeTimeTodo,
   } = props;
 
   const currentClass = classNames({
@@ -23,21 +27,41 @@ function TaskListItem(props) {
   return (
     <li className={currentClass}>
       <div className="view">
+        <ReactTooltip
+          className="tooltip"
+          id={`completeTodo${id}`}
+          type="success"
+          place="top"
+          effect="solid"
+          delayShow={300}
+        >
+          {completed ? 'Make active' : 'Make done'}
+        </ReactTooltip>
+
         <input
           className="toggle"
           id={`checkbox${id}`}
           type="checkbox"
           onChange={() => onToggleCompleted(id)}
           checked={completed}
+          data-tip
+          data-for={`completeTodo${id}`}
         />
 
-        <label>
+        <label
+          onClick={(e) => {
+            e.preventDefault();
+          }}
+        >
           <span className="title">{description}</span>
-          <span className="description">
-            <button type="button" aria-label="play" className="icon icon-play" />
-            <button type="button" aria-label="pause" className="icon icon-pause" />
-            12:25
-          </span>
+
+          <Timer
+            id={id}
+            currentTime={currentTime}
+            totalTime={totalTime}
+            onChangeTimeTodo={onChangeTimeTodo}
+          />
+
           <span className="created">
             created{' '}
             {formatDistanceToNow(new Date(timeCreated), {
@@ -52,13 +76,40 @@ function TaskListItem(props) {
           type="button"
           aria-label="edit todo"
           onClick={() => onActiveEdited(id, description)}
+          data-tip
+          data-for="editTodo"
         />
+
+        <ReactTooltip
+          className="tooltip"
+          id="editTodo"
+          type="error"
+          place="top"
+          effect="solid"
+          delayShow={300}
+        >
+          Edit
+        </ReactTooltip>
+
         <button
           className="icon icon-destroy"
           type="button"
           aria-label="delete todo"
           onClick={() => onDeleteTodo(id)}
+          data-tip
+          data-for="deleteTodo"
         />
+
+        <ReactTooltip
+          className="tooltip"
+          id="deleteTodo"
+          type="error"
+          place="top"
+          effect="solid"
+          delayShow={300}
+        >
+          Delete
+        </ReactTooltip>
       </div>
       {editing && (
         <form style={{ margin: 0 }} onSubmit={onSubmitEdited(id)}>

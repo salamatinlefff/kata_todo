@@ -13,6 +13,7 @@ function TaskList(props) {
     onSubmitEdited,
     onCancelInputEdit,
     onChangeEditInput,
+    onChangeTimeTodo,
   } = props;
 
   return (
@@ -28,6 +29,7 @@ function TaskList(props) {
           onSubmitEdited={onSubmitEdited}
           onCancelInputEdit={onCancelInputEdit}
           onChangeEditInput={onChangeEditInput}
+          onChangeTimeTodo={onChangeTimeTodo}
         />
       ))}
     </ul>
