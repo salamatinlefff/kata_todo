@@ -23,7 +23,6 @@ class App extends Component {
         JSON.stringify({
           todos: [],
           filter: 'All',
-          editTodoInputValue: '',
         }),
       );
     }
@@ -63,25 +62,15 @@ class App extends Component {
     });
   };
 
-  onChangeEditInput = ({ target: { value } }) => {
-    this.setState({
-      editTodoInputValue: value,
-    });
-  };
-
-  onSubmitEdited = (id) => (event) => {
-    event.preventDefault();
-
-    const { editTodoInputValue } = this.state;
-
-    if (!editTodoInputValue.trim()) return this.onDeleteTodo(id);
+  onSubmitEdited = (id, newValue) => {
+    if (!newValue.trim()) return this.onDeleteTodo(id);
 
     return this.setState((state) => {
       const newTodos = state.todos.map((todo) => {
         const newTodo = { ...todo };
 
         if (newTodo.id === id) {
-          newTodo.description = state.editTodoInputValue;
+          newTodo.description = newValue;
           newTodo.editing = !newTodo.editing;
         }
 
@@ -94,7 +83,7 @@ class App extends Component {
     });
   };
 
-  onActiveEdited = (id, description) => {
+  onActiveEdited = (id) => {
     const { todos } = this.state;
 
     const newTodos = todos.map((todo) => {
@@ -106,33 +95,26 @@ class App extends Component {
     });
 
     this.setState({
-      editTodoInputValue: description,
       todos: newTodos,
     });
   };
 
-  onCancelInputEdit =
-    (id) =>
-    ({ code }) => {
-      if (code === 'Escape') {
-        this.setState(({ todos }) => {
-          const newTodos = todos.map((todo) => {
-            const newTodo = { ...todo };
+  onCancelInputEdit = (id) =>
+    this.setState(({ todos }) => {
+      const newTodos = todos.map((todo) => {
+        const newTodo = { ...todo };
 
-            if (newTodo.id === id) {
-              newTodo.editing = !newTodo.editing;
-            }
+        if (newTodo.id === id) {
+          newTodo.editing = !newTodo.editing;
+        }
 
-            return newTodo;
-          });
+        return newTodo;
+      });
 
-          return {
-            editTodoInputValue: '',
-            todos: newTodos,
-          };
-        });
-      }
-    };
+      return {
+        todos: newTodos,
+      };
+    });
 
   onDeleteTodo = (deletedId) => {
     this.setState((state) => {
@@ -224,7 +206,7 @@ class App extends Component {
   }
 
   render() {
-    const { todos, filter, editTodoInputValue } = this.state;
+    const { todos, filter } = this.state;
 
     if (!todos) return null;
 
@@ -242,13 +224,11 @@ class App extends Component {
           {filteredTodos.length ? (
             <TaskList
               todos={filteredTodos}
-              editTodoInputValue={editTodoInputValue}
               onDeleteTodo={this.onDeleteTodo}
               onToggleCompleted={this.onToggleCompleted}
               onActiveEdited={this.onActiveEdited}
               onSubmitEdited={this.onSubmitEdited}
               onCancelInputEdit={this.onCancelInputEdit}
-              onChangeEditInput={this.onChangeEditInput}
               onChangeTimeTodo={this.onChangeTimeTodo}
             />
           ) : (

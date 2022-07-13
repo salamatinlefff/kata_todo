@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
+import PropTypes from 'prop-types';
 
 import { secondsToString } from '../utils/utils';
 
@@ -119,3 +120,10 @@ export default class Timer extends Component {
     );
   }
 }
+
+Timer.propTypes = {
+  id: PropTypes.string.isRequired,
+  totalTime: PropTypes.number.isRequired,
+  currentTime: PropTypes.number.isRequired,
+  onChangeTimeTodo: PropTypes.func.isRequired,
+};

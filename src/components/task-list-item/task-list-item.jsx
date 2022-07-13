@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import ReactTooltip from 'react-tooltip';
 import PropTypes from 'prop-types';
@@ -9,15 +9,30 @@ import Timer from '../timer';
 function TaskListItem(props) {
   const {
     todo: { id, description, timeCreated, completed, editing, totalTime, currentTime },
-    editTodoInputValue,
-    onDeleteTodo,
     onToggleCompleted,
+    onDeleteTodo,
     onActiveEdited,
-    onChangeEditInput,
     onCancelInputEdit,
     onSubmitEdited,
     onChangeTimeTodo,
   } = props;
+
+  const [editValue, setEditValue] = useState(description);
+
+  const onChangeEditInput = ({ target: { value } }) => setEditValue(value);
+
+  const onSubmitEdit = (event) => {
+    event.preventDefault();
+
+    onSubmitEdited(id, editValue);
+  };
+
+  const onCancelEdit = ({ code }) => {
+    if (code === 'Escape') {
+      setEditValue(description);
+      onCancelInputEdit(id);
+    }
+  };
 
   const currentClass = classNames({
     completed,
@@ -75,7 +90,7 @@ function TaskListItem(props) {
           className="icon icon-edit"
           type="button"
           aria-label="edit todo"
-          onClick={() => onActiveEdited(id, description)}
+          onClick={() => onActiveEdited(id)}
           data-tip
           data-for="editTodo"
         />
@@ -111,14 +126,15 @@ function TaskListItem(props) {
           Delete
         </ReactTooltip>
       </div>
+
       {editing && (
-        <form style={{ margin: 0 }} onSubmit={onSubmitEdited(id)}>
+        <form style={{ margin: 0 }} onSubmit={onSubmitEdit}>
           <input
             type="text"
             className="edit"
             autoFocus
-            value={editTodoInputValue}
-            onKeyUp={onCancelInputEdit(id)}
+            value={editValue}
+            onKeyUp={onCancelEdit}
             onChange={onChangeEditInput}
           />
         </form>
@@ -135,11 +151,9 @@ TaskListItem.propTypes = {
     completed: PropTypes.bool.isRequired,
     editing: PropTypes.bool.isRequired,
   }).isRequired,
-  editTodoInputValue: PropTypes.string.isRequired,
   onDeleteTodo: PropTypes.func.isRequired,
   onToggleCompleted: PropTypes.func.isRequired,
   onActiveEdited: PropTypes.func.isRequired,
-  onChangeEditInput: PropTypes.func.isRequired,
   onCancelInputEdit: PropTypes.func.isRequired,
   onSubmitEdited: PropTypes.func.isRequired,
 };
