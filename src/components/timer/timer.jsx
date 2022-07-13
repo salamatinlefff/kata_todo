@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
 import PropTypes from 'prop-types';
 
-import { secondsToString } from '../utils/utils';
+import { secondsToString } from '../../utils/utils';
 
 export default class Timer extends Component {
   state = {};
