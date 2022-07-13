@@ -51,7 +51,7 @@ export default class Timer extends Component {
   };
 
   render() {
-    const { currentTime } = this.state;
+    const { currentTime } = this.props;
 
     return (
       <span className="description">

@@ -27,6 +27,11 @@ class App extends Component {
       );
     }
 
+    window.addEventListener('storage', (event) => {
+      localStorage.setItem('todo-app', event.newValue);
+      this.setState(JSON.parse(event.newValue));
+    });
+
     const newState = JSON.parse(localStorage.getItem('todo-app'));
 
     this.setState(newState);
