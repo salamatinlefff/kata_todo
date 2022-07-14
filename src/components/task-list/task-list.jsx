@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import TaskListItem from '../task-list-item';
+import TaskItem from '../task-item';
 
 function TaskList(props) {
   const {
@@ -17,7 +17,7 @@ function TaskList(props) {
   return (
     <ul className="todo-list">
       {todos.map((todo) => (
-        <TaskListItem
+        <TaskItem
           key={todo.id}
           todo={todo}
           onDeleteTodo={onDeleteTodo}

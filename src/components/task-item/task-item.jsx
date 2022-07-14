@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import Timer from '../timer';
 
-function TaskListItem(props) {
+function TaskItem(props) {
   const {
     todo: { id, description, timeCreated, completed, editing, totalTime, currentTime },
     onToggleCompleted,
@@ -73,6 +73,7 @@ function TaskListItem(props) {
           <Timer
             id={id}
             currentTime={currentTime}
+            completed={completed}
             totalTime={totalTime}
             onChangeTimeTodo={onChangeTimeTodo}
           />
@@ -143,7 +144,7 @@ function TaskListItem(props) {
   );
 }
 
-TaskListItem.propTypes = {
+TaskItem.propTypes = {
   todo: PropTypes.shape({
     id: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
@@ -158,4 +159,4 @@ TaskListItem.propTypes = {
   onSubmitEdited: PropTypes.func.isRequired,
 };
 
-export default TaskListItem;
+export default TaskItem;

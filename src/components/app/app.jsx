@@ -34,9 +34,7 @@ class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { todos } = this.state;
 
-    if (todos === prevState.todos) {
-      return null;
-    }
+    if (todos === prevState.todos) return;
 
     const newStorageItem = { ...this.state, todos: [...todos] };
 
@@ -177,10 +175,14 @@ class App extends Component {
   };
 
   createFilteredTodos = (todos, filter) => {
-    if (filter === ACTIONS.ACTIVE) return todos.filter((todo) => !todo.completed);
-    if (filter === ACTIONS.COMPLETED) return todos.filter((todo) => todo.completed);
-
-    return [...todos];
+    switch (filter) {
+      case ACTIONS.ACTIVE:
+        return todos.filter((todo) => !todo.completed);
+      case ACTIONS.COMPLETED:
+        return todos.filter((todo) => todo.completed);
+      default:
+        return [...todos];
+    }
   };
 
   createTodo(options) {

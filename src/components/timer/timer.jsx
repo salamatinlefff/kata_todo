@@ -15,8 +15,9 @@ export default class Timer extends Component {
 
   componentDidUpdate() {
     const { currentTime } = this.state;
+    const { completed } = this.props;
 
-    if (currentTime <= 0) {
+    if (currentTime <= 0 || completed) {
       return clearTimeout(this.interval);
     }
   }
