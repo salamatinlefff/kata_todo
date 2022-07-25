@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-export default function Empty({ filter }) {
-  return <p className="lack-todo">No results found by filter &lsquo;{filter}&lsquo; </p>;
-}
+const Empty = memo(({ filter }) => (
+  <p className="lack-todo">No results found by filter &lsquo;{filter}&lsquo; </p>
+));
+
+export default Empty;

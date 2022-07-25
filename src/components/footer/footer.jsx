@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 
 import FilterButton from '../filter-button';
 
-function Footer(props) {
+const Footer = memo((props) => {
   const { activeTodosCount, activeClass, onClearCompleted, onReturnActiveFilter } = props;
   const buttonsContent = ['All', 'Active', 'Completed'];
 
@@ -28,7 +28,7 @@ function Footer(props) {
       </button>
     </footer>
   );
-}
+});
 
 Footer.propTypes = {
   activeTodosCount: PropTypes.number.isRequired,

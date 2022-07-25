@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import ACTIONS, { timeToSeconds } from '../../utils/utils';
@@ -8,7 +8,7 @@ import Header from '../header';
 import TaskForm from '../task-form';
 import TaskList from '../task-list';
 
-const App = () => {
+const App = memo(() => {
   const [filter, setFilter] = useState('All');
   const [todos, setTodos] = useState([]);
 
@@ -32,18 +32,16 @@ const App = () => {
 
       setTodos(JSON.parse(event.newValue));
     });
+
+    const interval = setInterval(() => setTodos((prev) => [...prev]), 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     const newStorageItem = { filter, todos: [...todos] };
 
-    const interval = setInterval(() => setTodos((prev) => [...prev]), 5000);
-
     localStorage.setItem('todo-app', JSON.stringify(newStorageItem));
-
-    return () => {
-      clearInterval(interval);
-    };
   });
 
   const createTodo = useCallback((options) => {
@@ -214,6 +212,6 @@ const App = () => {
       </section>
     </>
   );
-};
+});
 
 export default App;

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 
 import TaskItem from '../task-item';
 
-function TaskList(props) {
+const TaskList = memo((props) => {
   const {
     todos,
     onDeleteTodo,
@@ -30,7 +30,7 @@ function TaskList(props) {
       ))}
     </ul>
   );
-}
+});
 
 TaskList.defaultProps = {
   todos: [],

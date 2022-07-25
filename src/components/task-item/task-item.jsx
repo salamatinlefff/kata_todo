@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import Timer from '../timer';
 
-function TaskItem(props) {
+const TaskItem = (props) => {
   const {
     todo: { id, description, timeCreated, completed, editing, totalTime, currentTime, activeTimer },
     onToggleCompleted,
@@ -143,7 +143,7 @@ function TaskItem(props) {
       )}
     </li>
   );
-}
+};
 
 TaskItem.propTypes = {
   todo: PropTypes.shape({

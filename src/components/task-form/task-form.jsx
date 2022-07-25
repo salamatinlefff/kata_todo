@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import PropTypes from 'prop-types';
 
-function TaskForm(props) {
+const TaskForm = memo((props) => {
   const [text, setText] = useState('');
   const [minutes, setMinutes] = useState('');
   const [seconds, setSeconds] = useState('');
@@ -51,7 +51,7 @@ function TaskForm(props) {
       <button type="submit" hidden aria-label="submit form" />
     </form>
   );
-}
+});
 
 TaskForm.propTypes = {
   onSubmitNewTodoInput: PropTypes.func.isRequired,

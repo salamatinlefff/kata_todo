@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 
-function FilterButton(props) {
+const FilterButton = memo((props) => {
   const { content, activeClass, onReturnActiveFilter } = props;
 
   const className = activeClass === content ? 'selected' : '';
@@ -11,7 +11,7 @@ function FilterButton(props) {
       {content}
     </button>
   );
-}
+});
 
 FilterButton.propTypes = {
   content: PropTypes.string.isRequired,

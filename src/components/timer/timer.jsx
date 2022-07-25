@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import ReactTooltip from 'react-tooltip';
 import PropTypes from 'prop-types';
 
 import { secondsToString } from '../../utils/utils';
 
-const Timer = ({ id, completed, activeTimer, currentTime, totalTime, onChangeTimeTodo }) => {
+const Timer = memo(({ id, completed, activeTimer, currentTime, totalTime, onChangeTimeTodo }) => {
   useEffect(() => {
     let timer;
 
@@ -96,7 +96,7 @@ const Timer = ({ id, completed, activeTimer, currentTime, totalTime, onChangeTim
       <span className="time">{secondsToString(currentTime)}</span>
     </span>
   );
-};
+});
 
 Timer.propTypes = {
   id: PropTypes.string.isRequired,
