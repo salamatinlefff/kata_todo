@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import ACTIONS, { timeToSeconds } from '../../utils/utils';
+import Empty from '../empty';
 import Footer from '../footer';
 import Header from '../header';
 import TaskForm from '../task-form';
@@ -168,11 +169,12 @@ const App = () => {
     }
   };
 
-  if (!todos) return null;
-
   const filteredTodos = createFilteredTodos(todos, filter);
 
   const activeTodosCount = todos.filter((todo) => !todo.completed).length;
+
+  const hasData = !!filteredTodos.length;
+  const empty = !filteredTodos.length;
 
   return (
     <>
@@ -181,7 +183,7 @@ const App = () => {
       </Header>
 
       <section className="main">
-        {filteredTodos.length ? (
+        {hasData && (
           <TaskList
             todos={filteredTodos}
             onDeleteTodo={onDeleteTodo}
@@ -191,9 +193,9 @@ const App = () => {
             onCancelInputEdit={onCancelInputEdit}
             onChangeTimeTodo={onChangeTimeTodo}
           />
-        ) : (
-          <p className="lack-todo">No results found by filter &lsquo;{filter}&lsquo; </p>
         )}
+
+        {empty && <Empty filter={filter} />}
 
         <Footer
           activeTodosCount={activeTodosCount}
