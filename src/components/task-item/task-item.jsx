@@ -8,7 +8,7 @@ import Timer from '../timer';
 
 function TaskItem(props) {
   const {
-    todo: { id, description, timeCreated, completed, editing, totalTime, currentTime },
+    todo: { id, description, timeCreated, completed, editing, totalTime, currentTime, activeTimer },
     onToggleCompleted,
     onDeleteTodo,
     onActiveEdited,
@@ -76,6 +76,7 @@ function TaskItem(props) {
             completed={completed}
             totalTime={totalTime}
             onChangeTimeTodo={onChangeTimeTodo}
+            activeTimer={activeTimer}
           />
 
           <span className="created">
@@ -146,6 +147,7 @@ function TaskItem(props) {
 
 TaskItem.propTypes = {
   todo: PropTypes.shape({
+    activeTimer: PropTypes.bool.isRequired,
     id: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     timeCreated: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,

@@ -1,126 +1,102 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import ReactTooltip from 'react-tooltip';
 import PropTypes from 'prop-types';
 
 import { secondsToString } from '../../utils/utils';
 
-export default class Timer extends Component {
-  state = {};
+const Timer = ({ id, completed, activeTimer, currentTime, totalTime, onChangeTimeTodo }) => {
+  useEffect(() => {
+    let timer;
 
-  componentDidMount() {
-    const { currentTime } = this.props;
+    if (currentTime <= 0 || completed) onChangeTimeTodo({ id, activeTimer: false });
 
-    this.setState({ currentTime });
-  }
-
-  componentDidUpdate() {
-    const { currentTime } = this.state;
-    const { completed } = this.props;
-
-    if (currentTime <= 0 || completed) {
-      return clearTimeout(this.interval);
+    if (activeTimer) {
+      timer = setTimeout(() => {
+        onChangeTimeTodo({ id, currentTime: currentTime - 1 });
+      }, 1000);
     }
-  }
 
-  componentWillUnmount() {
-    clearTimeout(this.interval);
-  }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [currentTime, activeTimer, completed]);
 
-  startTimer = () => {
-    const { currentTime } = this.state;
-    const { id, onChangeTimeTodo, totalTime } = this.props;
+  const startTimer = () => onChangeTimeTodo({ id, activeTimer: true });
 
-    if (currentTime <= 0) this.setState({ currentTime: totalTime });
-
-    this.interval = setInterval(() => {
-      this.setState((prev) => {
-        onChangeTimeTodo(id, prev.currentTime - 1);
-        return { currentTime: prev.currentTime - 1 };
-      });
-    }, 1000);
+  const pauseTimer = () => {
+    onChangeTimeTodo({ id, activeTimer: false });
   };
 
-  pauseTimer = () => {
-    clearTimeout(this.interval);
+  const resetTimer = () => {
+    onChangeTimeTodo({ id, activeTimer: false, currentTime: totalTime });
   };
 
-  resetTimer = () => {
-    const { id, onChangeTimeTodo, totalTime } = this.props;
-    this.setState({ currentTime: totalTime });
-    clearTimeout(this.interval);
-    onChangeTimeTodo(id, totalTime);
-  };
+  return (
+    <span className="description">
+      <button
+        type="button"
+        aria-label="play"
+        className="icon icon-play"
+        onClick={startTimer}
+        data-tip
+        data-for="startTimer"
+      />
 
-  render() {
-    const { currentTime } = this.props;
+      <ReactTooltip
+        className="tooltip"
+        id="startTimer"
+        type="info"
+        place="top"
+        effect="solid"
+        delayShow={300}
+      >
+        Start
+      </ReactTooltip>
 
-    return (
-      <span className="description">
-        <button
-          type="button"
-          aria-label="play"
-          className="icon icon-play"
-          onClick={this.startTimer}
-          data-tip
-          data-for="startTimer"
-        />
+      <button
+        type="button"
+        aria-label="pause"
+        className="icon icon-pause"
+        onClick={pauseTimer}
+        data-tip
+        data-for="pauseTimer"
+      />
 
-        <ReactTooltip
-          className="tooltip"
-          id="startTimer"
-          type="info"
-          place="top"
-          effect="solid"
-          delayShow={300}
-        >
-          Start
-        </ReactTooltip>
+      <ReactTooltip
+        className="tooltip"
+        id="pauseTimer"
+        type="info"
+        place="top"
+        effect="solid"
+        delayShow={300}
+      >
+        Pause
+      </ReactTooltip>
 
-        <button
-          type="button"
-          aria-label="pause"
-          className="icon icon-pause"
-          onClick={this.pauseTimer}
-          data-tip
-          data-for="pauseTimer"
-        />
+      <button
+        type="button"
+        aria-label="stop"
+        className="icon icon-stop"
+        onClick={resetTimer}
+        data-tip
+        data-for="resetTimer"
+      />
 
-        <ReactTooltip
-          className="tooltip"
-          id="pauseTimer"
-          type="info"
-          place="top"
-          effect="solid"
-          delayShow={300}
-        >
-          Pause
-        </ReactTooltip>
+      <ReactTooltip
+        className="tooltip"
+        id="resetTimer"
+        type="info"
+        place="top"
+        effect="solid"
+        delayShow={300}
+      >
+        Reset
+      </ReactTooltip>
 
-        <button
-          type="button"
-          aria-label="stop"
-          className="icon icon-stop"
-          onClick={this.resetTimer}
-          data-tip
-          data-for="resetTimer"
-        />
-
-        <ReactTooltip
-          className="tooltip"
-          id="resetTimer"
-          type="info"
-          place="top"
-          effect="solid"
-          delayShow={300}
-        >
-          Reset
-        </ReactTooltip>
-
-        <span className="time">{secondsToString(currentTime)}</span>
-      </span>
-    );
-  }
-}
+      <span className="time">{secondsToString(currentTime)}</span>
+    </span>
+  );
+};
 
 Timer.propTypes = {
   id: PropTypes.string.isRequired,
@@ -128,3 +104,5 @@ Timer.propTypes = {
   currentTime: PropTypes.number.isRequired,
   onChangeTimeTodo: PropTypes.func.isRequired,
 };
+
+export default Timer;

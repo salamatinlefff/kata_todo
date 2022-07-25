@@ -136,7 +136,7 @@ class App extends Component {
   onSubmitNewTodoInput = ({ text, minutes, seconds }) => {
     const totalTime = timeToSeconds(minutes, seconds);
 
-    this.AddTodo({
+    this.addTodo({
       description: text.trim(),
       totalTime,
     });
@@ -148,10 +148,10 @@ class App extends Component {
     });
   };
 
-  onChangeTimeTodo = (id, currentTime) => {
+  onChangeTimeTodo = (timer) => {
     this.setState(({ todos }) => {
       const newTodos = todos.map((todo) => {
-        if (todo.id === id) return { ...todo, currentTime };
+        if (todo.id === timer.id) return { ...todo, ...timer };
 
         return todo;
       });
@@ -162,7 +162,7 @@ class App extends Component {
     });
   };
 
-  AddTodo = (options) => {
+  addTodo = (options) => {
     if (!options.description) return;
 
     this.setState(({ todos }) => {
@@ -193,6 +193,7 @@ class App extends Component {
       editing = false,
       totalTime,
       currentTime = totalTime,
+      activeTimer = false,
     } = options;
 
     return {
@@ -203,6 +204,7 @@ class App extends Component {
       timeCreated,
       completed,
       editing,
+      activeTimer,
     };
   }
 
