@@ -21,7 +21,7 @@ const Timer = ({ id, completed, activeTimer, currentTime, totalTime, onChangeTim
     };
   }, [currentTime, activeTimer, completed]);
 
-  const startTimer = () => onChangeTimeTodo({ id, activeTimer: true });
+  const startTimer = () => onChangeTimeTodo({ id, activeTimer: true, completed: false });
 
   const pauseTimer = () => {
     onChangeTimeTodo({ id, activeTimer: false });

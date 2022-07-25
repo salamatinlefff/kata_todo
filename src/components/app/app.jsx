@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import ACTIONS, { timeToSeconds } from '../../utils/utils';
@@ -7,10 +7,11 @@ import Header from '../header';
 import TaskForm from '../task-form';
 import TaskList from '../task-list';
 
-class App extends Component {
-  state = {};
+const App = () => {
+  const [filter, setFilter] = useState('All');
+  const [todos, setTodos] = useState([]);
 
-  componentDidMount() {
+  useEffect(() => {
     if (!localStorage.getItem('todo-app')) {
       const todoApp = {
         todos: [],
@@ -22,170 +23,29 @@ class App extends Component {
 
     const newState = JSON.parse(localStorage.getItem('todo-app'));
 
-    this.setState(newState);
-    this.interval = setInterval(() => this.setState({}), 5000);
+    setTodos(newState.todos);
+    setFilter(newState.filter);
 
     window.addEventListener('storage', (event) => {
       localStorage.setItem('todo-app', event.newValue || '');
-      this.setState(JSON.parse(event.newValue));
+
+      setTodos(JSON.parse(event.newValue));
     });
-  }
+  }, []);
 
-  componentDidUpdate(prevProps, prevState) {
-    const { todos } = this.state;
+  useEffect(() => {
+    const newStorageItem = { filter, todos: [...todos] };
 
-    if (todos === prevState.todos) return;
+    const interval = setInterval(() => setTodos((prev) => [...prev]), 5000);
 
-    const newStorageItem = { ...this.state, todos: [...todos] };
+    localStorage.setItem('todo-app', JSON.stringify(newStorageItem));
 
-    return localStorage.setItem('todo-app', JSON.stringify(newStorageItem));
-  }
+    return () => {
+      clearInterval(interval);
+    };
+  });
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  onToggleCompleted = (id) => {
-    this.setState(({ todos }) => {
-      const newTodos = todos.map((todo) => {
-        if (todo.id === id) return { ...todo, completed: !todo.completed };
-
-        return todo;
-      });
-
-      return {
-        todos: newTodos,
-      };
-    });
-  };
-
-  onSubmitEdited = (id, newValue) => {
-    if (!newValue.trim()) return this.onDeleteTodo(id);
-
-    return this.setState((state) => {
-      const newTodos = state.todos.map((todo) => {
-        const newTodo = { ...todo };
-
-        if (newTodo.id === id) {
-          newTodo.description = newValue;
-          newTodo.editing = !newTodo.editing;
-        }
-
-        return newTodo;
-      });
-
-      return {
-        todos: newTodos,
-      };
-    });
-  };
-
-  onActiveEdited = (id) => {
-    const { todos } = this.state;
-
-    const newTodos = todos.map((todo) => {
-      const newTodo = { ...todo };
-
-      if (newTodo.id === id) newTodo.editing = !newTodo.editing;
-
-      return newTodo;
-    });
-
-    this.setState({
-      todos: newTodos,
-    });
-  };
-
-  onCancelInputEdit = (id) =>
-    this.setState(({ todos }) => {
-      const newTodos = todos.map((todo) => {
-        const newTodo = { ...todo };
-
-        if (newTodo.id === id) {
-          newTodo.editing = !newTodo.editing;
-        }
-
-        return newTodo;
-      });
-
-      return {
-        todos: newTodos,
-      };
-    });
-
-  onDeleteTodo = (deletedId) => {
-    this.setState((state) => {
-      const newTodos = state.todos.filter(({ id }) => id !== deletedId);
-
-      return {
-        todos: newTodos,
-      };
-    });
-  };
-
-  onClearCompleted = () => {
-    this.setState(({ todos }) => {
-      const newTodos = todos.filter((todo) => !todo.completed);
-
-      return {
-        todos: newTodos,
-      };
-    });
-  };
-
-  onSubmitNewTodoInput = ({ text, minutes, seconds }) => {
-    const totalTime = timeToSeconds(minutes, seconds);
-
-    this.addTodo({
-      description: text.trim(),
-      totalTime,
-    });
-  };
-
-  onReturnActiveFilter = (filterName = 'All') => {
-    this.setState({
-      filter: filterName,
-    });
-  };
-
-  onChangeTimeTodo = (timer) => {
-    this.setState(({ todos }) => {
-      const newTodos = todos.map((todo) => {
-        if (todo.id === timer.id) return { ...todo, ...timer };
-
-        return todo;
-      });
-
-      return {
-        todos: newTodos,
-      };
-    });
-  };
-
-  addTodo = (options) => {
-    if (!options.description) return;
-
-    this.setState(({ todos }) => {
-      const newTodo = this.createTodo(options);
-
-      return {
-        todos: [...todos, newTodo],
-      };
-    });
-  };
-
-  createFilteredTodos = (todos, filter) => {
-    switch (filter) {
-      case ACTIONS.ACTIVE:
-        return todos.filter((todo) => !todo.completed);
-      case ACTIONS.COMPLETED:
-        return todos.filter((todo) => todo.completed);
-      default:
-        return [...todos];
-    }
-  };
-
-  createTodo(options) {
+  const createTodo = (options) => {
     const {
       description,
       timeCreated = new Date(),
@@ -206,48 +66,144 @@ class App extends Component {
       editing,
       activeTimer,
     };
-  }
+  };
 
-  render() {
-    const { todos, filter } = this.state;
+  const addTodo = (options) => {
+    if (!options.description) return;
 
-    if (!todos) return null;
+    setTodos((prevTodos) => {
+      const newTodo = createTodo(options);
 
-    const filteredTodos = this.createFilteredTodos(todos, filter);
+      return [...prevTodos, newTodo];
+    });
+  };
 
-    const activeTodosCount = todos.filter((todo) => !todo.completed).length;
+  const onToggleCompleted = (id) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => {
+        if (todo.id === id) return { ...todo, completed: !todo.completed };
 
-    return (
-      <>
-        <Header>
-          <TaskForm onSubmitNewTodoInput={this.onSubmitNewTodoInput} />
-        </Header>
-
-        <section className="main">
-          {filteredTodos.length ? (
-            <TaskList
-              todos={filteredTodos}
-              onDeleteTodo={this.onDeleteTodo}
-              onToggleCompleted={this.onToggleCompleted}
-              onActiveEdited={this.onActiveEdited}
-              onSubmitEdited={this.onSubmitEdited}
-              onCancelInputEdit={this.onCancelInputEdit}
-              onChangeTimeTodo={this.onChangeTimeTodo}
-            />
-          ) : (
-            <p className="lack-todo">No results found by filter &lsquo;{filter}&lsquo; </p>
-          )}
-
-          <Footer
-            activeTodosCount={activeTodosCount}
-            activeClass={filter}
-            onClearCompleted={this.onClearCompleted}
-            onReturnActiveFilter={this.onReturnActiveFilter}
-          />
-        </section>
-      </>
+        return todo;
+      }),
     );
-  }
-}
+  };
+
+  const onDeleteTodo = (deletedId) => {
+    setTodos((prevTodos) => prevTodos.filter(({ id }) => id !== deletedId));
+  };
+
+  const onSubmitEdited = (id, newValue) => {
+    if (!newValue.trim()) return onDeleteTodo(id);
+
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => {
+        const newTodo = { ...todo };
+
+        if (newTodo.id === id) {
+          newTodo.description = newValue;
+          newTodo.editing = !newTodo.editing;
+        }
+
+        return newTodo;
+      }),
+    );
+  };
+
+  const onActiveEdited = (id) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => {
+        const newTodo = { ...todo };
+
+        if (newTodo.id === id) newTodo.editing = !newTodo.editing;
+
+        return newTodo;
+      }),
+    );
+  };
+
+  const onCancelInputEdit = (id) =>
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => {
+        const newTodo = { ...todo };
+
+        if (newTodo.id === id) {
+          newTodo.editing = !newTodo.editing;
+        }
+
+        return newTodo;
+      }),
+    );
+
+  const onClearCompleted = () =>
+    setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed));
+
+  const onSubmitNewTodoInput = ({ text, minutes, seconds }) => {
+    const totalTime = timeToSeconds(minutes, seconds);
+
+    addTodo({
+      description: text.trim(),
+      totalTime,
+    });
+  };
+
+  const onReturnActiveFilter = (filterName = 'All') => setFilter(filterName);
+
+  const onChangeTimeTodo = (timer) =>
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => {
+        if (todo.id === timer.id) return { ...todo, ...timer };
+
+        return todo;
+      }),
+    );
+
+  const createFilteredTodos = (arr, prop) => {
+    switch (prop) {
+      case ACTIONS.ACTIVE:
+        return arr.filter((todo) => !todo.completed);
+      case ACTIONS.COMPLETED:
+        return arr.filter((todo) => todo.completed);
+      default:
+        return [...arr];
+    }
+  };
+
+  if (!todos) return null;
+
+  const filteredTodos = createFilteredTodos(todos, filter);
+
+  const activeTodosCount = todos.filter((todo) => !todo.completed).length;
+
+  return (
+    <>
+      <Header>
+        <TaskForm onSubmitNewTodoInput={onSubmitNewTodoInput} />
+      </Header>
+
+      <section className="main">
+        {filteredTodos.length ? (
+          <TaskList
+            todos={filteredTodos}
+            onDeleteTodo={onDeleteTodo}
+            onToggleCompleted={onToggleCompleted}
+            onActiveEdited={onActiveEdited}
+            onSubmitEdited={onSubmitEdited}
+            onCancelInputEdit={onCancelInputEdit}
+            onChangeTimeTodo={onChangeTimeTodo}
+          />
+        ) : (
+          <p className="lack-todo">No results found by filter &lsquo;{filter}&lsquo; </p>
+        )}
+
+        <Footer
+          activeTodosCount={activeTodosCount}
+          activeClass={filter}
+          onClearCompleted={onClearCompleted}
+          onReturnActiveFilter={onReturnActiveFilter}
+        />
+      </section>
+    </>
+  );
+};
 
 export default App;
