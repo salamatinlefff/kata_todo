@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import ACTIONS, { timeToSeconds } from '../../utils/utils';
@@ -46,7 +46,7 @@ const App = () => {
     };
   });
 
-  const createTodo = (options) => {
+  const createTodo = useCallback((options) => {
     const {
       description,
       timeCreated = new Date(),
@@ -67,9 +67,9 @@ const App = () => {
       editing,
       activeTimer,
     };
-  };
+  }, []);
 
-  const addTodo = (options) => {
+  const addTodo = useCallback((options) => {
     if (!options.description) return;
 
     setTodos((prevTodos) => {
@@ -77,9 +77,9 @@ const App = () => {
 
       return [...prevTodos, newTodo];
     });
-  };
+  }, []);
 
-  const onToggleCompleted = (id) => {
+  const onToggleCompleted = useCallback((id) => {
     setTodos((prevTodos) =>
       prevTodos.map((todo) => {
         if (todo.id === id) return { ...todo, completed: !todo.completed };
@@ -87,13 +87,13 @@ const App = () => {
         return todo;
       }),
     );
-  };
+  }, []);
 
-  const onDeleteTodo = (deletedId) => {
+  const onDeleteTodo = useCallback((deletedId) => {
     setTodos((prevTodos) => prevTodos.filter(({ id }) => id !== deletedId));
-  };
+  }, []);
 
-  const onSubmitEdited = (id, newValue) => {
+  const onSubmitEdited = useCallback((id, newValue) => {
     if (!newValue.trim()) return onDeleteTodo(id);
 
     setTodos((prevTodos) =>
@@ -108,9 +108,9 @@ const App = () => {
         return newTodo;
       }),
     );
-  };
+  }, []);
 
-  const onActiveEdited = (id) => {
+  const onActiveEdited = useCallback((id) => {
     setTodos((prevTodos) =>
       prevTodos.map((todo) => {
         const newTodo = { ...todo };
@@ -120,45 +120,53 @@ const App = () => {
         return newTodo;
       }),
     );
-  };
+  }, []);
 
-  const onCancelInputEdit = (id) =>
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
-        const newTodo = { ...todo };
+  const onCancelInputEdit = useCallback(
+    (id) =>
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) => {
+          const newTodo = { ...todo };
 
-        if (newTodo.id === id) {
-          newTodo.editing = !newTodo.editing;
-        }
+          if (newTodo.id === id) {
+            newTodo.editing = !newTodo.editing;
+          }
 
-        return newTodo;
-      }),
-    );
+          return newTodo;
+        }),
+      ),
+    [],
+  );
 
-  const onClearCompleted = () =>
-    setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed));
+  const onClearCompleted = useCallback(
+    () => setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed)),
+    [],
+  );
 
-  const onSubmitNewTodoInput = ({ text, minutes, seconds }) => {
+  const onSubmitNewTodoInput = useCallback(({ text, minutes, seconds }) => {
     const totalTime = timeToSeconds(minutes, seconds);
 
     addTodo({
       description: text.trim(),
       totalTime,
     });
-  };
+  }, []);
 
-  const onReturnActiveFilter = (filterName = 'All') => setFilter(filterName);
+  const onReturnActiveFilter = useCallback((filterName = 'All') => setFilter(filterName), []);
 
-  const onChangeTimeTodo = (timer) =>
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
-        if (todo.id === timer.id) return { ...todo, ...timer };
+  const onChangeTimeTodo = useCallback(
+    (timer) =>
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) => {
+          if (todo.id === timer.id) return { ...todo, ...timer };
 
-        return todo;
-      }),
-    );
+          return todo;
+        }),
+      ),
+    [],
+  );
 
-  const createFilteredTodos = (arr, prop) => {
+  const createFilteredTodos = useCallback((arr, prop) => {
     switch (prop) {
       case ACTIONS.ACTIVE:
         return arr.filter((todo) => !todo.completed);
@@ -167,7 +175,7 @@ const App = () => {
       default:
         return [...arr];
     }
-  };
+  }, []);
 
   const filteredTodos = createFilteredTodos(todos, filter);
 
