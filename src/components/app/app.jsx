@@ -67,15 +67,18 @@ const App = memo(() => {
     };
   }, []);
 
-  const addTodo = useCallback((options) => {
-    if (!options.description) return;
+  const addTodo = useCallback(
+    (options) => {
+      if (!options.description) return;
 
-    setTodos((prevTodos) => {
-      const newTodo = createTodo(options);
+      setTodos((prevTodos) => {
+        const newTodo = createTodo(options);
 
-      return [...prevTodos, newTodo];
-    });
-  }, []);
+        return [...prevTodos, newTodo];
+      });
+    },
+    [createTodo],
+  );
 
   const onToggleCompleted = useCallback((id) => {
     setTodos((prevTodos) =>
@@ -91,22 +94,25 @@ const App = memo(() => {
     setTodos((prevTodos) => prevTodos.filter(({ id }) => id !== deletedId));
   }, []);
 
-  const onSubmitEdited = useCallback((id, newValue) => {
-    if (!newValue.trim()) return onDeleteTodo(id);
+  const onSubmitEdited = useCallback(
+    (id, newValue) => {
+      if (!newValue.trim()) return onDeleteTodo(id);
 
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
-        const newTodo = { ...todo };
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) => {
+          const newTodo = { ...todo };
 
-        if (newTodo.id === id) {
-          newTodo.description = newValue;
-          newTodo.editing = !newTodo.editing;
-        }
+          if (newTodo.id === id) {
+            newTodo.description = newValue;
+            newTodo.editing = !newTodo.editing;
+          }
 
-        return newTodo;
-      }),
-    );
-  }, []);
+          return newTodo;
+        }),
+      );
+    },
+    [onDeleteTodo],
+  );
 
   const onActiveEdited = useCallback((id) => {
     setTodos((prevTodos) =>
@@ -141,14 +147,17 @@ const App = memo(() => {
     [],
   );
 
-  const onSubmitNewTodoInput = useCallback(({ text, minutes, seconds }) => {
-    const totalTime = timeToSeconds(minutes, seconds);
+  const onSubmitNewTodoInput = useCallback(
+    ({ text, minutes, seconds }) => {
+      const totalTime = timeToSeconds(minutes, seconds);
 
-    addTodo({
-      description: text.trim(),
-      totalTime,
-    });
-  }, []);
+      addTodo({
+        description: text.trim(),
+        totalTime,
+      });
+    },
+    [addTodo],
+  );
 
   const onReturnActiveFilter = useCallback((filterName = 'All') => setFilter(filterName), []);
 
