@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import ACTIONS, { timeToSeconds } from '../../utils/utils';
@@ -8,7 +8,7 @@ import Header from '../header';
 import TaskForm from '../task-form';
 import TaskList from '../task-list';
 
-const App = memo(() => {
+const App = () => {
   const [filter, setFilter] = useState('All');
   const [todos, setTodos] = useState([]);
 
@@ -221,6 +221,6 @@ const App = memo(() => {
       </section>
     </>
   );
-});
+};
 
 export default App;
