@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
-import ACTIONS, { timeToSeconds } from '../../utils/utils';
+import { ACTIONS, timeToSeconds } from '../../utils';
 import Empty from '../empty';
 import Footer from '../footer';
 import Header from '../header';

@@ -4,8 +4,6 @@ const ACTIONS = {
   COMPLETED: 'Completed',
 };
 
-export default ACTIONS;
-
 const addZero = (num) => {
   if (Number.isNaN(parseInt(num, 10))) return '00';
 
@@ -14,7 +12,7 @@ const addZero = (num) => {
   return num;
 };
 
-export const secondsToString = (seconds) => {
+const secondsToString = (seconds) => {
   const hours = addZero(parseInt(seconds / 3600, 10));
   const minutes = addZero(parseInt((seconds / 60) % 60, 10));
   const second = addZero(parseInt(seconds % 60, 10));
@@ -25,7 +23,7 @@ export const secondsToString = (seconds) => {
   return hours === '00' ? timeWithoutHours : timeWithHours;
 };
 
-export const timeToSeconds = (minutes, seconds) => {
+const timeToSeconds = (minutes, seconds) => {
   let min = parseInt(minutes, 10);
   let sec = parseInt(seconds, 10);
 
@@ -34,3 +32,4 @@ export const timeToSeconds = (minutes, seconds) => {
 
   return min * 60 + sec;
 };
+export { ACTIONS, secondsToString, timeToSeconds };
