@@ -18,11 +18,31 @@ const TaskForm = memo((props) => {
     setSeconds('');
   };
 
-  const onChangeText = ({ target: { value } }) => setText(value);
+  const onChangeText = ({ target: { value } }) => {
+    setText(value);
+  };
 
-  const onChangeMinutes = ({ target: { value } }) => setMinutes(value);
+  const onChangeMinutes = ({ target: { value } }) => {
+    if (value > 1439) {
+      return setMinutes(1439);
+    }
 
-  const onChangeSeconds = ({ target: { value } }) => setSeconds(value);
+    setMinutes(value);
+  };
+
+  const onChangeSeconds = ({ target: { value } }) => {
+    if (value > 60) {
+      return setSeconds(60);
+    }
+
+    setSeconds(value);
+  };
+
+  const addZero = (num) => {
+    if (num === '' || num >= 10) return num;
+
+    if (num < 10) return `0${num}`;
+  };
 
   return (
     <form className="new-todo-form" style={{ margin: 0 }} onSubmit={onSubmit}>
@@ -36,16 +56,20 @@ const TaskForm = memo((props) => {
       />
       <input
         className="new-todo-form__timer"
-        type="text"
+        type="number"
         onChange={onChangeMinutes}
-        value={minutes}
+        value={addZero(minutes)}
+        min={0}
+        max={1439}
         placeholder="Min"
       />
       <input
         className="new-todo-form__timer"
-        type="text"
+        type="number"
         onChange={onChangeSeconds}
-        value={seconds}
+        value={addZero(seconds)}
+        min={0}
+        max={60}
         placeholder="Sec"
       />
       <button type="submit" hidden aria-label="submit form" />
