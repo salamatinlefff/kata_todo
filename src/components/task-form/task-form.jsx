@@ -1,5 +1,8 @@
 import React, { memo, useState } from 'react';
 import PropTypes from 'prop-types';
+import { v4 as uuid } from 'uuid';
+
+import { timeToSeconds } from '../../utils/utils';
 
 const TaskForm = memo((props) => {
   const [text, setText] = useState('');
@@ -12,7 +15,19 @@ const TaskForm = memo((props) => {
     event.preventDefault();
 
     if (text) {
-      onSubmitNewTodoInput({ text, minutes, seconds });
+      const maxTime = timeToSeconds(minutes, seconds);
+      const newTodo = {
+        id: uuid(),
+        timeCreated: new Date(),
+        description: text,
+        maxTime,
+        completed: false,
+        editing: false,
+        currentTime: maxTime,
+        activeTimer: false,
+      };
+
+      onSubmitNewTodoInput(newTodo);
 
       setText('');
       setMinutes('');

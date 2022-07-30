@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { secondsToString } from '../../utils/utils';
 
-const Timer = memo(({ id, completed, activeTimer, currentTime, totalTime, onChangeTimeTodo }) => {
+const Timer = memo(({ id, completed, activeTimer, currentTime, maxTime, onChangeTimeTodo }) => {
   useEffect(() => {
     let timer;
 
@@ -28,7 +28,7 @@ const Timer = memo(({ id, completed, activeTimer, currentTime, totalTime, onChan
   };
 
   const resetTimer = () => {
-    onChangeTimeTodo({ id, activeTimer: false, currentTime: totalTime });
+    onChangeTimeTodo({ id, activeTimer: false, currentTime: maxTime });
   };
 
   return (
@@ -100,7 +100,7 @@ const Timer = memo(({ id, completed, activeTimer, currentTime, totalTime, onChan
 
 Timer.propTypes = {
   id: PropTypes.string.isRequired,
-  totalTime: PropTypes.number.isRequired,
+  maxTime: PropTypes.number.isRequired,
   currentTime: PropTypes.number.isRequired,
   onChangeTimeTodo: PropTypes.func.isRequired,
 };

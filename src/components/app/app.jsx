@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 
-import { ACTIONS, timeToSeconds } from '../../utils';
+import { ACTIONS } from '../../utils';
 import Empty from '../empty';
 import Footer from '../footer';
 import Header from '../header';
@@ -43,42 +42,6 @@ const App = () => {
 
     localStorage.setItem('todo-app', JSON.stringify(newStorageItem));
   });
-
-  const createTodo = useCallback((options) => {
-    const {
-      description,
-      timeCreated = new Date(),
-      completed = false,
-      editing = false,
-      totalTime,
-      currentTime = totalTime,
-      activeTimer = false,
-    } = options;
-
-    return {
-      id: uuid(),
-      totalTime,
-      currentTime,
-      description,
-      timeCreated,
-      completed,
-      editing,
-      activeTimer,
-    };
-  }, []);
-
-  const addTodo = useCallback(
-    (options) => {
-      if (!options.description) return;
-
-      setTodos((prevTodos) => {
-        const newTodo = createTodo(options);
-
-        return [...prevTodos, newTodo];
-      });
-    },
-    [createTodo],
-  );
 
   const onToggleCompleted = useCallback((id) => {
     setTodos((prevTodos) =>
@@ -147,17 +110,9 @@ const App = () => {
     [],
   );
 
-  const onSubmitNewTodoInput = useCallback(
-    ({ text, minutes, seconds }) => {
-      const totalTime = timeToSeconds(minutes, seconds);
+  const addTodo = useCallback((newTodo) => setTodos((prevTodos) => [...prevTodos, newTodo]), []);
 
-      addTodo({
-        description: text.trim(),
-        totalTime,
-      });
-    },
-    [addTodo],
-  );
+  const onSubmitNewTodoInput = useCallback((newTodo) => addTodo(newTodo), [addTodo]);
 
   const onReturnActiveFilter = useCallback((filterName = 'All') => setFilter(filterName), []);
 

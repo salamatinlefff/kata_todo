@@ -8,7 +8,7 @@ import Timer from '../timer';
 
 const TaskItem = (props) => {
   const {
-    todo: { id, description, timeCreated, completed, editing, totalTime, currentTime, activeTimer },
+    todo: { id, description, timeCreated, completed, editing, maxTime, currentTime, activeTimer },
     onToggleCompleted,
     onDeleteTodo,
     onActiveEdited,
@@ -74,7 +74,7 @@ const TaskItem = (props) => {
             id={id}
             currentTime={currentTime}
             completed={completed}
-            totalTime={totalTime}
+            maxTime={maxTime}
             onChangeTimeTodo={onChangeTimeTodo}
             activeTimer={activeTimer}
           />
@@ -153,6 +153,7 @@ TaskItem.propTypes = {
     timeCreated: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     completed: PropTypes.bool.isRequired,
     editing: PropTypes.bool.isRequired,
+    maxTime: PropTypes.number.isRequired,
   }).isRequired,
   onDeleteTodo: PropTypes.func.isRequired,
   onToggleCompleted: PropTypes.func.isRequired,
