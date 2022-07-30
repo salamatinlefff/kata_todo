@@ -20,11 +20,11 @@ const TaskForm = memo((props) => {
         id: uuid(),
         timeCreated: new Date(),
         description: text,
-        maxTime,
         completed: false,
         editing: false,
-        currentTime: maxTime,
         activeTimer: false,
+        currentTime: maxTime,
+        maxTime,
       };
 
       onSubmitNewTodoInput(newTodo);
