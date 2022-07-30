@@ -1,10 +1,25 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useCallback, useContext, useEffect } from 'react';
 import ReactTooltip from 'react-tooltip';
 import PropTypes from 'prop-types';
 
 import { secondsToString } from '../../utils/utils';
+import { TodosContext } from '../../context';
 
-const Timer = memo(({ id, completed, activeTimer, currentTime, maxTime, onChangeTimeTodo }) => {
+const Timer = memo(({ id, completed, activeTimer, currentTime, maxTime }) => {
+  const { setTodos } = useContext(TodosContext);
+
+  const onChangeTimeTodo = useCallback(
+    (timer) =>
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) => {
+          if (todo.id === timer.id) return { ...todo, ...timer };
+
+          return todo;
+        }),
+      ),
+    [setTodos],
+  );
+
   useEffect(() => {
     let timer;
 
@@ -102,7 +117,6 @@ Timer.propTypes = {
   id: PropTypes.string.isRequired,
   maxTime: PropTypes.number.isRequired,
   currentTime: PropTypes.number.isRequired,
-  onChangeTimeTodo: PropTypes.func.isRequired,
 };
 
 export default Timer;

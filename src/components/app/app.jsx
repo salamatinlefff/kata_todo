@@ -1,15 +1,33 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 
-import { ACTIONS } from '../../utils';
-import Empty from '../empty';
+import { FilterContext, TodosContext } from '../../context';
+import FilterButtonList from '../filter-button-list';
 import Footer from '../footer';
 import Header from '../header';
+import Main from '../main';
 import TaskForm from '../task-form';
 import TaskList from '../task-list';
 
 const App = () => {
-  const [filter, setFilter] = useState('All');
-  const [todos, setTodos] = useState([]);
+  const { todos, setTodos } = useContext(TodosContext);
+  const { filter, setFilter } = useContext(FilterContext);
+
+  const updateStorage = (item) => {
+    let newItem = item;
+
+    if (typeof item === 'object') {
+      newItem = JSON.stringify(item);
+    }
+
+    localStorage.setItem('todo-app', newItem);
+  };
+
+  const updateState = () => {
+    const storage = JSON.parse(localStorage.getItem('todo-app'));
+
+    setTodos(storage.todos);
+    setFilter(storage.filter);
+  };
 
   useEffect(() => {
     if (!localStorage.getItem('todo-app')) {
@@ -18,162 +36,46 @@ const App = () => {
         filter: 'All',
       };
 
-      localStorage.setItem('todo-app', JSON.stringify(todoApp));
+      updateStorage(todoApp);
     }
 
-    const newState = JSON.parse(localStorage.getItem('todo-app'));
-
-    setTodos(newState.todos);
-    setFilter(newState.filter);
+    updateState();
 
     window.addEventListener('storage', (event) => {
-      localStorage.setItem('todo-app', event.newValue || '');
+      updateStorage(event.newValue || '');
 
-      setTodos(JSON.parse(event.newValue));
+      setTodos(JSON.parse(event.newValue).todos);
     });
 
+    // update created time todo
     const interval = setInterval(() => setTodos((prev) => [...prev]), 5000);
 
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    const newStorageItem = { filter, todos: [...todos] };
+    if (filter && todos) {
+      const newStorageItem = { filter, todos: [...todos] };
 
-    localStorage.setItem('todo-app', JSON.stringify(newStorageItem));
+      updateStorage(newStorageItem);
+    }
   });
 
-  const onToggleCompleted = useCallback((id) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
-        if (todo.id === id) return { ...todo, completed: !todo.completed };
-
-        return todo;
-      }),
-    );
-  }, []);
-
-  const onDeleteTodo = useCallback((deletedId) => {
-    setTodos((prevTodos) => prevTodos.filter(({ id }) => id !== deletedId));
-  }, []);
-
-  const onSubmitEdited = useCallback(
-    (id, newValue) => {
-      if (!newValue.trim()) return onDeleteTodo(id);
-
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) => {
-          const newTodo = { ...todo };
-
-          if (newTodo.id === id) {
-            newTodo.description = newValue;
-            newTodo.editing = !newTodo.editing;
-          }
-
-          return newTodo;
-        }),
-      );
-    },
-    [onDeleteTodo],
-  );
-
-  const onActiveEdited = useCallback((id) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
-        const newTodo = { ...todo };
-
-        if (newTodo.id === id) newTodo.editing = !newTodo.editing;
-
-        return newTodo;
-      }),
-    );
-  }, []);
-
-  const onCancelInputEdit = useCallback(
-    (id) =>
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) => {
-          const newTodo = { ...todo };
-
-          if (newTodo.id === id) {
-            newTodo.editing = !newTodo.editing;
-          }
-
-          return newTodo;
-        }),
-      ),
-    [],
-  );
-
-  const onClearCompleted = useCallback(
-    () => setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed)),
-    [],
-  );
-
-  const addTodo = useCallback((newTodo) => setTodos((prevTodos) => [...prevTodos, newTodo]), []);
-
-  const onSubmitNewTodoInput = useCallback((newTodo) => addTodo(newTodo), [addTodo]);
-
-  const onReturnActiveFilter = useCallback((filterName = 'All') => setFilter(filterName), []);
-
-  const onChangeTimeTodo = useCallback(
-    (timer) =>
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) => {
-          if (todo.id === timer.id) return { ...todo, ...timer };
-
-          return todo;
-        }),
-      ),
-    [],
-  );
-
-  const createFilteredTodos = useCallback((arr, prop) => {
-    switch (prop) {
-      case ACTIONS.ACTIVE:
-        return arr.filter((todo) => !todo.completed);
-      case ACTIONS.COMPLETED:
-        return arr.filter((todo) => todo.completed);
-      default:
-        return [...arr];
-    }
-  }, []);
-
-  const filteredTodos = createFilteredTodos(todos, filter);
-
-  const activeTodosCount = todos.filter((todo) => !todo.completed).length;
-
-  const hasData = !!filteredTodos.length;
-  const empty = !filteredTodos.length;
+  if (!todos) return null;
 
   return (
     <>
       <Header>
-        <TaskForm onSubmitNewTodoInput={onSubmitNewTodoInput} />
+        <TaskForm />
       </Header>
 
-      <section className="main">
-        {hasData && (
-          <TaskList
-            todos={filteredTodos}
-            onDeleteTodo={onDeleteTodo}
-            onToggleCompleted={onToggleCompleted}
-            onActiveEdited={onActiveEdited}
-            onSubmitEdited={onSubmitEdited}
-            onCancelInputEdit={onCancelInputEdit}
-            onChangeTimeTodo={onChangeTimeTodo}
-          />
-        )}
+      <Main>
+        <TaskList />
 
-        {empty && <Empty filter={filter} />}
-
-        <Footer
-          activeTodosCount={activeTodosCount}
-          activeClass={filter}
-          onClearCompleted={onClearCompleted}
-          onReturnActiveFilter={onReturnActiveFilter}
-        />
-      </section>
+        <Footer>
+          <FilterButtonList />
+        </Footer>
+      </Main>
     </>
   );
 };

@@ -1,15 +1,19 @@
-import React, { memo, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { memo, useContext, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import { timeToSeconds } from '../../utils/utils';
+import { TodosContext } from '../../context';
 
-const TaskForm = memo((props) => {
+const TaskForm = memo(() => {
+  const { setTodos } = useContext(TodosContext);
+
   const [text, setText] = useState('');
   const [minutes, setMinutes] = useState('');
   const [seconds, setSeconds] = useState('');
 
-  const { onSubmitNewTodoInput } = props;
+  const addTodo = (newTodo) => setTodos((prevTodos) => [...prevTodos, newTodo]);
+
+  const onSubmitNewTodoInput = (newTodo) => addTodo(newTodo);
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -21,7 +25,6 @@ const TaskForm = memo((props) => {
         timeCreated: new Date(),
         description: text,
         completed: false,
-        editing: false,
         activeTimer: false,
         currentTime: maxTime,
         maxTime,
@@ -93,9 +96,5 @@ const TaskForm = memo((props) => {
     </form>
   );
 });
-
-TaskForm.propTypes = {
-  onSubmitNewTodoInput: PropTypes.func.isRequired,
-};
 
 export default TaskForm;

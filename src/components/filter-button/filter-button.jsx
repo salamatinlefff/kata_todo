@@ -1,13 +1,16 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 const FilterButton = memo((props) => {
-  const { content, activeClass, onReturnActiveFilter } = props;
+  const { content, activeClass, onChangeActiveFilter } = props;
 
-  const className = activeClass === content ? 'selected' : '';
+  const className = classNames({
+    selected: activeClass === content,
+  });
 
   return (
-    <button className={className} type="button" onClick={() => onReturnActiveFilter(content)}>
+    <button className={className} type="button" onClick={() => onChangeActiveFilter(content)}>
       {content}
     </button>
   );
@@ -16,7 +19,7 @@ const FilterButton = memo((props) => {
 FilterButton.propTypes = {
   content: PropTypes.string.isRequired,
   activeClass: PropTypes.string.isRequired,
-  onReturnActiveFilter: PropTypes.func.isRequired,
+  onChangeActiveFilter: PropTypes.func.isRequired,
 };
 
 export default FilterButton;

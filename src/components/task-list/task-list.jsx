@@ -1,49 +1,40 @@
-import React, { memo } from 'react';
-import PropTypes from 'prop-types';
+import React, { memo, useContext } from 'react';
 
 import TaskItem from '../task-item';
+import Empty from '../empty';
+import { FilterContext, TodosContext } from '../../context';
+import { ACTIONS } from '../../utils';
 
-const TaskList = memo((props) => {
-  const {
-    todos,
-    onDeleteTodo,
-    onToggleCompleted,
-    onActiveEdited,
-    onSubmitEdited,
-    onCancelInputEdit,
-    onChangeTimeTodo,
-  } = props;
+const TaskList = memo(() => {
+  const { filter } = useContext(FilterContext);
+  const { todos } = useContext(TodosContext);
+
+  const createFilteredTodos = (arr, prop) => {
+    switch (prop) {
+      case ACTIONS.ACTIVE:
+        return arr.filter((todo) => !todo.completed);
+      case ACTIONS.COMPLETED:
+        return arr.filter((todo) => todo.completed);
+      default:
+        return [...arr];
+    }
+  };
+
+  const filteredTodos = createFilteredTodos(todos, filter);
+
+  const empty = !filteredTodos.length;
 
   return (
-    <ul className="todo-list">
-      {todos.map((todo) => (
-        <TaskItem
-          key={todo.id}
-          todo={todo}
-          onDeleteTodo={onDeleteTodo}
-          onToggleCompleted={onToggleCompleted}
-          onActiveEdited={onActiveEdited}
-          onSubmitEdited={onSubmitEdited}
-          onCancelInputEdit={onCancelInputEdit}
-          onChangeTimeTodo={onChangeTimeTodo}
-        />
-      ))}
-    </ul>
+    <>
+      {empty && <Empty filter={filter} />}
+
+      <ul className="todo-list">
+        {filteredTodos.map((todo) => (
+          <TaskItem key={todo.id} todo={todo} />
+        ))}
+      </ul>
+    </>
   );
 });
-
-TaskList.defaultProps = {
-  todos: [],
-};
-
-TaskList.propTypes = {
-  todos: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.object])),
-  onDeleteTodo: PropTypes.func.isRequired,
-  onToggleCompleted: PropTypes.func.isRequired,
-  onActiveEdited: PropTypes.func.isRequired,
-  onSubmitEdited: PropTypes.func.isRequired,
-  onCancelInputEdit: PropTypes.func.isRequired,
-  onChangeTimeTodo: PropTypes.func.isRequired,
-};
 
 export default TaskList;

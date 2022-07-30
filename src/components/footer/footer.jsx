@@ -1,40 +1,26 @@
-import React, { memo } from 'react';
-import PropTypes from 'prop-types';
+import React, { memo, useContext } from 'react';
 
-import FilterButton from '../filter-button';
+import { TodosContext } from '../../context';
 
 const Footer = memo((props) => {
-  const { activeTodosCount, activeClass, onClearCompleted, onReturnActiveFilter } = props;
-  const buttonsContent = ['All', 'Active', 'Completed'];
+  const { todos, setTodos } = useContext(TodosContext);
+
+  const onClearCompleted = () =>
+    setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed));
+
+  const activeTodosCount = todos.filter((todo) => !todo.completed).length;
+
+  const { children } = props;
 
   return (
     <footer className="footer">
       <span className="todo-count">{activeTodosCount} items left</span>
-
-      <ul className="filters">
-        {buttonsContent.map((content, index) => (
-          <li key={buttonsContent[index]}>
-            <FilterButton
-              activeClass={activeClass}
-              content={content}
-              onReturnActiveFilter={onReturnActiveFilter}
-            />
-          </li>
-        ))}
-      </ul>
-
+      {children}
       <button className="clear-completed" type="button" onClick={onClearCompleted}>
         Clear completed
       </button>
     </footer>
   );
 });
-
-Footer.propTypes = {
-  activeTodosCount: PropTypes.number.isRequired,
-  activeClass: PropTypes.string.isRequired,
-  onClearCompleted: PropTypes.func.isRequired,
-  onReturnActiveFilter: PropTypes.func.isRequired,
-};
 
 export default Footer;
