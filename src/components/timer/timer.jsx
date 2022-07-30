@@ -19,7 +19,7 @@ const Timer = memo(({ id, completed, activeTimer, currentTime, maxTime, onChange
     return () => {
       clearTimeout(timer);
     };
-  }, [currentTime, activeTimer, completed]);
+  }, [currentTime, activeTimer, completed, id, onChangeTimeTodo]);
 
   const startTimer = () => onChangeTimeTodo({ id, activeTimer: true, completed: false });
 
