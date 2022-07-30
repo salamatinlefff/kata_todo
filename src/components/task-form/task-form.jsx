@@ -11,11 +11,13 @@ const TaskForm = memo((props) => {
   const onSubmit = (event) => {
     event.preventDefault();
 
-    onSubmitNewTodoInput({ text, minutes, seconds });
+    if (text) {
+      onSubmitNewTodoInput({ text, minutes, seconds });
 
-    setText('');
-    setMinutes('');
-    setSeconds('');
+      setText('');
+      setMinutes('');
+      setSeconds('');
+    }
   };
 
   const onChangeText = ({ target: { value } }) => {
