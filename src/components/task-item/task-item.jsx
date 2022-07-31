@@ -1,37 +1,26 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import Timer from '../timer';
-import { TodosContext } from '../../context';
 import Tooltip from '../hoc-helper';
 
-const TaskItem = ({
-  todo: { id, description, timeCreated, completed, maxTime, currentTime, activeTimer },
-}) => {
-  const { setTodos } = useContext(TodosContext);
+const TaskItem = (props) => {
+  const {
+    todo: { id, description, timeCreated, completed, maxTime, currentTime, activeTimer },
+    submitEdit,
+    onToggleCompleted,
+    onDeleteTodo,
+  } = props;
 
   const [editValue, setEditValue] = useState(description);
-  const [editTodo, setEditTodo] = useState(false);
+  const [editActive, setEditActive] = useState(false);
 
   const onChangeEditInput = ({ target: { value } }) => setEditValue(value);
 
-  const onToggleCompleted = () =>
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
-        if (todo.id === id) return { ...todo, completed: !todo.completed };
-
-        return todo;
-      }),
-    );
-
-  const onDeleteTodo = (deletedId) => {
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== deletedId));
-  };
-
   const onActiveEdited = () => {
-    setEditTodo(true);
+    setEditActive(true);
   };
 
   const onSubmitEdit = (event) => {
@@ -39,40 +28,21 @@ const TaskItem = ({
 
     if (!editValue.trim()) return onDeleteTodo(id);
 
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
-        const newTodo = { ...todo };
-
-        if (newTodo.id === id) {
-          newTodo.description = editValue;
-
-          setEditTodo(false);
-        }
-
-        return newTodo;
-      }),
-    );
+    submitEdit(id, editValue);
+    setEditActive(false);
   };
 
   const onCancelEdit = ({ code }) => {
     if (code === 'Escape') {
       setEditValue(description);
 
-      setEditTodo(false);
-
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) => {
-          const newTodo = { ...todo };
-
-          return newTodo;
-        }),
-      );
+      setEditActive(false);
     }
   };
 
   const currentClass = classNames({
     completed,
-    editing: editTodo,
+    editing: editActive,
   });
 
   return (
@@ -88,7 +58,7 @@ const TaskItem = ({
           className="toggle"
           id={`checkbox${id}`}
           type="checkbox"
-          onChange={onToggleCompleted}
+          onChange={() => onToggleCompleted(id)}
           checked={completed}
           data-tip
           data-for={`completeTodo${id}`}
@@ -141,7 +111,7 @@ const TaskItem = ({
         <Tooltip id="deleteTodo" type="error" text="Delete" />
       </div>
 
-      {editTodo && (
+      {editActive && (
         <form style={{ margin: 0 }} onSubmit={onSubmitEdit}>
           <input
             type="text"

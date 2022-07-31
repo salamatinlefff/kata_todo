@@ -1,4 +1,4 @@
-import React, { memo, useContext } from 'react';
+import React, { memo, useCallback, useContext } from 'react';
 
 import TaskItem from '../task-item';
 import Empty from '../empty';
@@ -7,7 +7,43 @@ import { ACTIONS } from '../../utils';
 
 const TaskList = memo(() => {
   const { filter } = useContext(FilterContext);
-  const { todos } = useContext(TodosContext);
+  const { todos, setTodos } = useContext(TodosContext);
+
+  const onToggleCompleted = useCallback(
+    (id) =>
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) => {
+          if (todo.id === id) return { ...todo, completed: !todo.completed };
+
+          return todo;
+        }),
+      ),
+    [setTodos],
+  );
+
+  const onDeleteTodo = useCallback(
+    (deletedId) => {
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== deletedId));
+    },
+    [setTodos],
+  );
+
+  const submitEdit = useCallback(
+    (id, newValue) => {
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) => {
+          const newTodo = { ...todo };
+
+          if (newTodo.id === id) {
+            newTodo.description = newValue;
+          }
+
+          return newTodo;
+        }),
+      );
+    },
+    [setTodos],
+  );
 
   const createFilteredTodos = (arr, prop) => {
     switch (prop) {
@@ -30,7 +66,13 @@ const TaskList = memo(() => {
 
       <ul className="todo-list">
         {filteredTodos.map((todo) => (
-          <TaskItem key={todo.id} todo={todo} />
+          <TaskItem
+            key={todo.id}
+            todo={todo}
+            submitEdit={submitEdit}
+            onToggleCompleted={onToggleCompleted}
+            onDeleteTodo={onDeleteTodo}
+          />
         ))}
       </ul>
     </>
