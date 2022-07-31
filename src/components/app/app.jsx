@@ -30,6 +30,7 @@ const App = () => {
   };
 
   useEffect(() => {
+    //* Save default data
     if (!localStorage.getItem('todo-app')) {
       const todoApp = {
         todos: [],
@@ -41,13 +42,14 @@ const App = () => {
 
     updateState();
 
+    //* Save to localStorage in other window
     window.addEventListener('storage', (event) => {
       updateStorage(event.newValue || '');
 
       setTodos(JSON.parse(event.newValue).todos);
     });
 
-    // update created time todo
+    //* Update created time todo
     const interval = setInterval(() => setTodos((prev) => [...prev]), 5000);
 
     return () => clearInterval(interval);
