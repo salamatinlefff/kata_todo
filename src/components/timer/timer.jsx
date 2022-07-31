@@ -1,9 +1,9 @@
 import React, { memo, useCallback, useContext, useEffect } from 'react';
-import ReactTooltip from 'react-tooltip';
 import PropTypes from 'prop-types';
 
 import { secondsToString } from '../../utils/utils';
 import { TodosContext } from '../../context';
+import Tooltip from '../hoc-helper';
 
 const Timer = memo(({ id, completed, activeTimer, currentTime, maxTime }) => {
   const { setTodos } = useContext(TodosContext);
@@ -57,16 +57,7 @@ const Timer = memo(({ id, completed, activeTimer, currentTime, maxTime }) => {
         data-for="startTimer"
       />
 
-      <ReactTooltip
-        className="tooltip"
-        id="startTimer"
-        type="info"
-        place="top"
-        effect="solid"
-        delayShow={300}
-      >
-        Start
-      </ReactTooltip>
+      <Tooltip id="startTimer" type="info" text="Start" />
 
       <button
         type="button"
@@ -77,16 +68,7 @@ const Timer = memo(({ id, completed, activeTimer, currentTime, maxTime }) => {
         data-for="pauseTimer"
       />
 
-      <ReactTooltip
-        className="tooltip"
-        id="pauseTimer"
-        type="info"
-        place="top"
-        effect="solid"
-        delayShow={300}
-      >
-        Pause
-      </ReactTooltip>
+      <Tooltip id="pauseTimer" type="info" text="Pause" />
 
       <button
         type="button"
@@ -97,16 +79,7 @@ const Timer = memo(({ id, completed, activeTimer, currentTime, maxTime }) => {
         data-for="resetTimer"
       />
 
-      <ReactTooltip
-        className="tooltip"
-        id="resetTimer"
-        type="info"
-        place="top"
-        effect="solid"
-        delayShow={300}
-      >
-        Reset
-      </ReactTooltip>
+      <Tooltip id="resetTimer" type="info" text="Reset" />
 
       <span className="time">{secondsToString(currentTime)}</span>
     </span>

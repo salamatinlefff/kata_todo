@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import ReactTooltip from 'react-tooltip';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import Timer from '../timer';
 import { TodosContext } from '../../context';
+import Tooltip from '../hoc-helper';
 
 const TaskItem = ({
   todo: { id, description, timeCreated, completed, maxTime, currentTime, activeTimer },
@@ -78,16 +78,11 @@ const TaskItem = ({
   return (
     <li className={currentClass}>
       <div className="view">
-        <ReactTooltip
-          className="tooltip"
+        <Tooltip
           id={`completeTodo${id}`}
           type="success"
-          place="top"
-          effect="solid"
-          delayShow={300}
-        >
-          {completed ? 'Make active' : 'Make done'}
-        </ReactTooltip>
+          text={completed ? 'Make active' : 'Make done'}
+        />
 
         <input
           className="toggle"
@@ -132,16 +127,7 @@ const TaskItem = ({
           data-for="editTodo"
         />
 
-        <ReactTooltip
-          className="tooltip"
-          id="editTodo"
-          type="error"
-          place="top"
-          effect="solid"
-          delayShow={300}
-        >
-          Edit
-        </ReactTooltip>
+        <Tooltip id="editTodo" type="error" text="Edit" />
 
         <button
           className="icon icon-destroy"
@@ -152,16 +138,7 @@ const TaskItem = ({
           data-for="deleteTodo"
         />
 
-        <ReactTooltip
-          className="tooltip"
-          id="deleteTodo"
-          type="error"
-          place="top"
-          effect="solid"
-          delayShow={300}
-        >
-          Delete
-        </ReactTooltip>
+        <Tooltip id="deleteTodo" type="error" text="Delete" />
       </div>
 
       {editTodo && (
